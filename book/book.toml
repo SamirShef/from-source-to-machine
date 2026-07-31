@@ -3,3 +3,6 @@
 title = "Компиляторы: От текста к машинному коду"
 authors = ["SamirShef"]
 language = "ru"
+
+[output.html]
+additional-js = ["theme/pebble-highlight.js"]
