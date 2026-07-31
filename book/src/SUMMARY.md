@@ -1,3 +1,8 @@
 # Summary
 
-- [Введение](./chapters/0_introduction.md)
+[Предисловие](./about.md)
+
+# Том 1: От текста до машинного кода
+
+- [Введение]()
+  - [Почему эта книга?](./chapters/ch1/why-this-book.md)
