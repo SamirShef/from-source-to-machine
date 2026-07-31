@@ -1,0 +1,5 @@
+[book]
+# title = "Compilers: From Source to Machine Code"
+title = "Компиляторы: От текста к машинному коду"
+authors = ["SamirShef"]
+language = "ru"
