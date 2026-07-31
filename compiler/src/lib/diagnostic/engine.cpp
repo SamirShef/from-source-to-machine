@@ -74,10 +74,12 @@ DiagnosticEngine::printAnnotation (
     const Annotation &annotation, std::uint32_t maxLineWidth) {
     auto startLoc = _mgr.FindLoc (annotation.Span.Start);
     auto endLoc   = _mgr.FindLoc (annotation.Span.End);
+
     std::cerr << color::YELLOW << std::format ("{:{}}", startLoc.Line, maxLineWidth)
               << color::RESET << " | ";
     auto lineContent = _mgr.GetLineContent (annotation.Span.Start.FileId, startLoc.Line);
     std::cerr << lineContent << '\n';
+
     std::cerr << std::string (maxLineWidth, ' ') << " | ";
     std::cerr << std::string (startLoc.Col - 1, ' ');
     char highlighter = annotation.IsPrimary ? '^' : '-';
