@@ -15,5 +15,10 @@ fn main(): int32 {
     n = 0;
     for n < 10, n += 1 {}
 
+    // infinite loop
+    foo {
+        break;
+    }
+
     return 0;
 }
