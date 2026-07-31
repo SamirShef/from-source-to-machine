@@ -1,0 +1,6 @@
+extern "C" fn puts(s: *char): int32;
+
+fn main(): int32 {
+    puts("Hello world!");
+    return 0;
+}

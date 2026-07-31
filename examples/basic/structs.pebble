@@ -1,0 +1,9 @@
+struct Person {
+    name: string;
+    height: float32;
+}
+
+fn main(): int32 {
+    var person = Person { name: "Alex", height: 1.76 };
+    return 0;
+}

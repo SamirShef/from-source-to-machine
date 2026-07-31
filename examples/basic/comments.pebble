@@ -1,0 +1,11 @@
+// single line comment
+
+/*
+    multi-
+    line
+    comment
+*/
+
+// compiler ignores comments.
+// comments do not affect the compilation
+// and execution of the program.

@@ -1,0 +1,19 @@
+fn main(): int32 {
+    // standard for loop
+    for var i = 0, i < 10, i += 1 {}
+
+    // while loop representation
+    var n = 0;
+    for n < 10 {
+        n += 1;
+    }
+
+    // other options
+    for var i = 0; i < 10 {
+        i += 1;
+    }
+    n = 0;
+    for n < 10, n += 1 {}
+
+    return 0;
+}

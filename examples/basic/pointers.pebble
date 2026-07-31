@@ -1,0 +1,7 @@
+fn main(): int32 {
+    var x = 10;   // inferred the int32 type
+    var x_p = &x; // inferred the *int32 type
+    *x_p = 0;     // x became 0
+    x_p = nil;    // nullptr/NULL analog
+    return x;     // returns 0
+}

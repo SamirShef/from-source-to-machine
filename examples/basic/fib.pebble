@@ -1,0 +1,5 @@
+import "fib_impl.pebble";
+
+fn main(): int32 {
+    return fib(5);
+}

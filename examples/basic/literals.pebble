@@ -1,0 +1,10 @@
+var character = 'A';              // ASCII character literal
+var str1 = "Hello world!";        // inferred the string (slice) type
+var str2: *char = "Hello world!"; // casted to the *char type
+var int = 10;                     // inferred the int32 type
+var i8: int8 = 10;                // 10 casted to the int8 type
+var uint = 10u32;                 // u32 is a suffix for type uint32
+                                  // any number type name can
+                                  // be used as a suffix
+                                  // e.g. 10f32 for float32, 123i8 for int8,
+                                  // or 64u16 for uint16

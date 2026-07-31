@@ -1,0 +1,79 @@
+name: Build & Book Deployment
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-compiler:
+    name: Compiler (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build-type: [Release]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure CMake & Ninja
+        uses: cmake/setup-cmake@v3
+
+      - name: CMake
+        run: >
+          cmake -B ${{ github.workspace }}/compiler/build -S ${{
+          github.workspace }}/compiler -DCMAKE_BUILD_TYPE=${{ matrix.build-type
+          }}
+
+      - name: Build Compiler
+        run: >
+          cmake --build ${{ github.workspace }}/compiler/build --config ${{
+          matrix.build-type }}
+
+      - name: Run Tests
+        run: >
+          ctest --test-dir ${{ github.workspace }}/compiler/build -C ${{
+          matrix.build-type }} --output-on-failure
+
+  build-and-deploy-book:
+    name: Build & Deploy Book
+    runs-on: ubuntu-latest
+    if: github.event_name == "push" && github.ref == "refs/heads/main"
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: "latest"
+
+      - name: Build Book
+        run: |
+          cd book
+          mdbook build
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: book/book
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

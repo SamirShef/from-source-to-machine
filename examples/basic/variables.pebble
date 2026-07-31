@@ -1,0 +1,4 @@
+var   x: int32;
+var   y: int32 = 10;
+var   z        = 10;           // inferred the int32 type
+const pi       = 3.1415926535; // inferred the float64 type

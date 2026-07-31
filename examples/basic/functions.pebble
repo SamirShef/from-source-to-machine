@@ -1,0 +1,7 @@
+fn main(argc: int32, argv: **char) { // program entry point
+    return add(2, 3);                // return 5
+}
+
+fn add(a: int32, b: int32): int32 {
+    return a + b;
+}

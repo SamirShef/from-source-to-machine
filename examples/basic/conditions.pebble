@@ -1,0 +1,31 @@
+fn main(): int32 {
+    var cond = 1 == 1; // inferred the bool type
+    if cond {
+        // true block
+    }
+
+    if cond {
+        // true block
+    } else {
+        // else block
+    }
+
+    var cond2 = false; // inferred the bool type
+    if cond {
+        // true block
+    } else if cond2 {
+        // else if block
+    } else {
+        // else block
+    }
+
+    var a   = 10;
+    var b   = 20;
+    var max = max(a, b);
+
+    return max; // returns 20
+}
+
+fn max(a: int32, b: int32): int32 {
+    return a > b ? a : b; // ternary operator
+}
