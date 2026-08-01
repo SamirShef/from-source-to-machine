@@ -6,8 +6,6 @@
 
 `DiagnosticEngine` создаётся в единственном экземпляре на весь процесс компиляции. Он принимает по ссылке `SourceMgr`, аккумулирует сгенерированные ошибки и предоставляет метод `Render()` для вывода их в `std::cerr`.
 
----
-
 ## Цветной вывод и ANSI-коды
 
 Чтобы диагностика легко читалась, ключевые элементы (ошибки, предупреждения, подчёркивания) должны выделяться цветом. Для этого используются **ANSI escape-последовательности** — специальные символьные управляющие коды, которые терминал интерпретирует как инструкции по изменению стиля текста.
@@ -75,8 +73,6 @@ main () {
 }
 ```
 
----
-
 ## Проблема выравнивания номеров строк
 
 Взгляните на то, как выглядит вывод ошибок из реальных исходных файлов. Номера строк могут быть однозначными (строка `2`), двузначными (строка `45`) или четырёхзначными (строка `1024`):
@@ -104,8 +100,6 @@ DigitCount (std::uint32_t line) {
 ```
 
 Математически логарифм `std::log10(100)` равен `2`, прибавляя `1`, мы получаем `3` (количество цифр в числе 100). Это дает мгновенный результат за `O(1)` без преобразования числа в строку.
-
----
 
 ## Объявление класса `DiagnosticEngine`
 
@@ -197,12 +191,13 @@ private:
 
     void
     printAnnotation (const Annotation &annotation, std::uint32_t maxLineWidth);
+
+    static void
+    printNote (const Note &note, std::uint32_t maxLineWidth);
 };
 $
 $}
 ```
-
----
 
 ## Реализация форматирования и рендеринга
 
@@ -303,6 +298,9 @@ DiagnosticEngine::printDiagnosticBody (DiagnosticBuilder &diag) {
         printAnnotation (annotation, maxLineWidth);
         std::cerr << std::string (maxLineWidth, ' ') << " |\n";
     }
+    for (const auto &note : diag.Notes ()) {
+        printNote (note, maxLineWidth);
+    }
 }
 
 void
@@ -321,6 +319,12 @@ DiagnosticEngine::printAnnotation (
     char highlighter = annotation.IsPrimary ? '^' : '-';
     std::cerr << color::RED << std::string (endLoc.Col - startLoc.Col, highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
+}
+
+void
+DiagnosticEngine::printNote (const Note &note, std::uint32_t maxLineWidth) {
+    std::cerr << color::RESET << std::string (maxLineWidth, ' ') << " = ";
+    std::cerr << color::CYAN << "note: " << color::RESET << note.Msg << '\n';
 }
 $
 $};
@@ -360,7 +364,18 @@ error[E0012]: variable 'x' is already defined
    * Выбирается символ подчёркивания (`^` если `annotation.IsPrimary == true`, иначе `-`).
    * Печатается цепочка символов подчёркивания длиной `endLoc.Col - startLoc.Col` и метка `annotation.Label`.
 
----
+#### Вывод примечаний (`printNote`)
+
+После того как все строки кода с аннотациями отрисованы, `printDiagnosticBody` проходит по вектору примечаний `diag.Notes()`.
+
+Для каждого объекта `Note` вызывается `printNote`:
+
+1. Печатается отступ из `maxLineWidth` пробелов, чтобы знак равенства `=` встал ровно под колонкой, где раньше выводились разделители `|`.
+2. Выводится знак `=` с пробелами.
+3. Голубым цветом (`color::CYAN`) печатается префикс `note:`.
+4. После префикса сбрасывается цвет и выводится сам текст примечания `note.Msg`.
+
+Благодаря этому примечания выглядят как аккуратные сноски внизу блока ошибки, не привязанные к конкретной строке кода, но идеально вписывающиеся в общую колонку выравнивания.
 
 ## Полный пример работы
 
@@ -399,7 +414,8 @@ main () {
 
     engine.Report (DiagCode::ERedefinition, "variable 'x' is already defined", DiagSeverity::Error)
         .AddAnnotation (Span{ firstDeclStart, firstDeclEnd }, "previous definition was here", false)
-        .AddAnnotation (Span{ secondDeclStart, secondDeclEnd }, "redefined here", true);
+        .AddAnnotation (Span{ secondDeclStart, secondDeclEnd }, "redefined here", true)
+        .AddNote ("identifiers within the same scope must be unique");
 
     // Рендерим накопленные ошибки
     engine.Render ();
@@ -420,6 +436,7 @@ error[E0007]: variable 'x' is already defined
 3 |     var x = 20;
   |         ^ redefined here
   |
+  = note: identifiers within the same scope must be unique
 ```
 
 Модуль диагностики полностью завершён! Мы создали функциональную, красивую и отказоустойчивую подсистему сообщений об ошибках уровня современных промышленных компиляторов.
