@@ -78,32 +78,7 @@ private:
     printDiagnosticHeader (DiagnosticBuilder &diag);
 
     void
-    printDiagnosticBody (DiagnosticBuilder &diag) {
-        auto maxAnnotation = std::max_element (
-            diag.Annotations ().begin (),
-            diag.Annotations ().end (),
-            [&] (const Annotation &a, const Annotation &b) {
-                return _mgr.FindLoc (a.Span.Start).Line
-                       < _mgr.FindLoc (b.Span.Start).Line;
-            });
-        auto loc          = _mgr.FindLoc (maxAnnotation->Span.Start);
-        auto maxLine      = loc.Line;
-        auto maxLineWidth = DigitCount (maxLine);
-        std::cerr << color::RESET << std::string (maxLineWidth, ' ') << "--> "
-                  << _mgr.GetFile (maxAnnotation->Span.Start.FileId).Name << ':'
-                  << loc.Line << ':' << loc.Col << '\n';
-        for (const auto &annotation : diag.Annotations ()) {
-            if (annotation == *diag.Annotations ().begin ()) {
-                std::cerr << color::RESET;
-                std::cerr << std::string (maxLineWidth, ' ') << " |\n";
-            }
-            printAnnotation (annotation, maxLineWidth);
-            std::cerr << std::string (maxLineWidth, ' ') << " |\n";
-        }
-        for (const auto &note : diag.Notes ()) {
-            printNote (note, maxLineWidth);
-        }
-    }
+    printDiagnosticBody (DiagnosticBuilder &diag);
 
     void
     printAnnotation (const Annotation &annotation, std::uint32_t maxLineWidth);
