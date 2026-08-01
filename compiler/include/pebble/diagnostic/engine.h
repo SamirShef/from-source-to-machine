@@ -90,7 +90,8 @@ private:
         auto maxLine      = loc.Line;
         auto maxLineWidth = DigitCount (maxLine);
         std::cerr << color::RESET << std::string (maxLineWidth, ' ') << "--> "
-                  << _mgr.GetFile (maxAnnotation->Span.Start.FileId).Name << '\n';
+                  << _mgr.GetFile (maxAnnotation->Span.Start.FileId).Name << ':'
+                  << loc.Line << ':' << loc.Col << '\n';
         for (const auto &annotation : diag.Annotations ()) {
             if (annotation == *diag.Annotations ().begin ()) {
                 std::cerr << color::RESET;
