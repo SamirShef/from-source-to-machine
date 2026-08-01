@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="book/src/images/cover.png" style="border-radius=12px;">
+    <img src="book/src/images/cover.png" alt="Compilers: From Source to Machine Code" width="380" style="border-radius=12px;">
 
     # Компиляторы: От текста к машинному коду
     ### Compilers: From Source to Machine Code
