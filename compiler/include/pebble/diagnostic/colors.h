@@ -1,5 +1,7 @@
 #pragma once
 
+namespace pebble {
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -28,5 +30,7 @@ constexpr Color RED    = "\033[31m";
 constexpr Color YELLOW = "\033[33m";
 constexpr Color BLUE   = "\033[34m";
 constexpr Color CYAN   = "\033[36m";
+
+}
 
 }
