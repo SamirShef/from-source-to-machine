@@ -110,7 +110,10 @@ DiagnosticEngine::printAnnotation (
     std::cerr << std::string (maxLineWidth, ' ') << " | ";
     std::cerr << std::string (startLoc.Col - 1, ' ');
     char highlighter = annotation.IsPrimary ? '^' : '-';
-    std::cerr << color::RED << std::string (endLoc.Col - startLoc.Col, highlighter);
+    std::cerr << color::RED
+              << std::string (
+                     annotation.Span.End.Start - annotation.Span.Start.Start,
+                     highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
 }
 

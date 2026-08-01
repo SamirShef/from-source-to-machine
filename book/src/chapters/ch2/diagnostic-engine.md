@@ -317,7 +317,10 @@ DiagnosticEngine::printAnnotation (
     std::cerr << std::string (maxLineWidth, ' ') << " | ";
     std::cerr << std::string (startLoc.Col - 1, ' ');
     char highlighter = annotation.IsPrimary ? '^' : '-';
-    std::cerr << color::RED << std::string (endLoc.Col - startLoc.Col, highlighter);
+    std::cerr << color::RED
+              << std::string (
+                     annotation.Span.End.Start - annotation.Span.Start.Start,
+                     highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
 }
 
@@ -362,7 +365,7 @@ error[E0012]: variable 'x' is already defined
    * Из `SourceMgr` по номеру строки запрашивается сам текст исходного кода `lineContent`.
    * На следующей строке выводятся пробелы до колонки `startLoc.Col - 1`.
    * Выбирается символ подчёркивания (`^` если `annotation.IsPrimary == true`, иначе `-`).
-   * Печатается цепочка символов подчёркивания длиной `endLoc.Col - startLoc.Col` и метка `annotation.Label`.
+   * Печатается цепочка символов подчёркивания длиной `annotation.Span.End.Start - annotation.Span.Start.Start` и метка `annotation.Label`.
 
 #### Вывод примечаний (`printNote`)
 
