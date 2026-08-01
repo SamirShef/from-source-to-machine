@@ -87,4 +87,10 @@ DiagnosticEngine::printAnnotation (
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
 }
 
+void
+DiagnosticEngine::printNote (const Note &note, std::uint32_t maxLineWidth) {
+    std::cerr << color::RESET << std::string (maxLineWidth, ' ') << " = ";
+    std::cerr << color::CYAN << "note: " << color::RESET << note.Msg << '\n';
+}
+
 };

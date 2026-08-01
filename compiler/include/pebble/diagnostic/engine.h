@@ -100,10 +100,16 @@ private:
             printAnnotation (annotation, maxLineWidth);
             std::cerr << std::string (maxLineWidth, ' ') << " |\n";
         }
+        for (const auto &note : diag.Notes ()) {
+            printNote (note, maxLineWidth);
+        }
     }
 
     void
     printAnnotation (const Annotation &annotation, std::uint32_t maxLineWidth);
+
+    static void
+    printNote (const Note &note, std::uint32_t maxLineWidth);
 };
 
 }
