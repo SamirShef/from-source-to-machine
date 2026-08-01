@@ -70,6 +70,33 @@ DiagnosticEngine::printDiagnosticHeader (DiagnosticBuilder &diag) {
 }
 
 void
+DiagnosticEngine::printDiagnosticBody (DiagnosticBuilder &diag) {
+    auto maxAnnotation = std::max_element (
+        diag.Annotations ().begin (),
+        diag.Annotations ().end (),
+        [&] (const Annotation &a, const Annotation &b) {
+            return _mgr.FindLoc (a.Span.Start).Line < _mgr.FindLoc (b.Span.Start).Line;
+        });
+    auto loc          = _mgr.FindLoc (maxAnnotation->Span.Start);
+    auto maxLine      = loc.Line;
+    auto maxLineWidth = DigitCount (maxLine);
+    std::cerr << color::RESET << std::string (maxLineWidth, ' ') << "--> "
+              << _mgr.GetFile (maxAnnotation->Span.Start.FileId).Name << ':' << loc.Line
+              << ':' << loc.Col << '\n';
+    for (const auto &annotation : diag.Annotations ()) {
+        if (annotation == *diag.Annotations ().begin ()) {
+            std::cerr << color::RESET;
+            std::cerr << std::string (maxLineWidth, ' ') << " |\n";
+        }
+        printAnnotation (annotation, maxLineWidth);
+        std::cerr << std::string (maxLineWidth, ' ') << " |\n";
+    }
+    for (const auto &note : diag.Notes ()) {
+        printNote (note, maxLineWidth);
+    }
+}
+
+void
 DiagnosticEngine::printAnnotation (
     const Annotation &annotation, std::uint32_t maxLineWidth) {
     auto startLoc = _mgr.FindLoc (annotation.Span.Start);
@@ -83,8 +110,17 @@ DiagnosticEngine::printAnnotation (
     std::cerr << std::string (maxLineWidth, ' ') << " | ";
     std::cerr << std::string (startLoc.Col - 1, ' ');
     char highlighter = annotation.IsPrimary ? '^' : '-';
-    std::cerr << color::RED << std::string (endLoc.Col - startLoc.Col, highlighter);
+    std::cerr << color::RED
+              << std::string (
+                     annotation.Span.End.Start - annotation.Span.Start.Start,
+                     highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
+}
+
+void
+DiagnosticEngine::printNote (const Note &note, std::uint32_t maxLineWidth) {
+    std::cerr << color::RESET << std::string (maxLineWidth, ' ') << " = ";
+    std::cerr << color::CYAN << "note: " << color::RESET << note.Msg << '\n';
 }
 
 };
