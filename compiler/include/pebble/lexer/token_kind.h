@@ -17,7 +17,7 @@ enum class TokenKind : std::uint8_t {
     Uint32,  // type `uint32`
     Uint64,  // type `uint64`
     Float32, // type `float32`
-    Fload64, // type `float64`
+    Float64, // type `float64`
 
     Var,      // keyword `var`
     Const,    // keyword `const`
@@ -89,5 +89,98 @@ enum class TokenKind : std::uint8_t {
     Unknown,
     Eof
 };
+
+inline const char *
+TokenKindToString (TokenKind kind) {
+#define variant(kind)                                                                    \
+    case TokenKind::kind:                                                                \
+        return #kind;
+
+    switch (kind) {
+        variant (Id);
+        variant (Bool);
+        variant (Char);
+        variant (Int8);
+        variant (Int16);
+        variant (Int32);
+        variant (Int64);
+        variant (Uint8);
+        variant (Uint16);
+        variant (Uint32);
+        variant (Uint64);
+        variant (Float32);
+        variant (Float64);
+        variant (Var);
+        variant (Const);
+        variant (Fn);
+        variant (Ret);
+        variant (If);
+        variant (Else);
+        variant (For);
+        variant (Break);
+        variant (Continue);
+        variant (Struct);
+        variant (Nil);
+        variant (Import);
+        variant (Extern);
+        variant (BoolLit);
+        variant (CharLit);
+        variant (Int8Lit);
+        variant (Int16Lit);
+        variant (Int32Lit);
+        variant (Int64Lit);
+        variant (Uint8Lit);
+        variant (Uint16Lit);
+        variant (Uint32Lit);
+        variant (Uint64Lit);
+        variant (Float32Lit);
+        variant (Float64Lit);
+        variant (IntLit);
+        variant (StrLit);
+        variant (Semi);
+        variant (Comma);
+        variant (Dot);
+        variant (LParen);
+        variant (RParen);
+        variant (LBrace);
+        variant (RBrace);
+        variant (LBracket);
+        variant (RBracket);
+        variant (Question);
+        variant (Colon);
+        variant (Eq);
+        variant (Amp);
+        variant (Pipe);
+        variant (AmpAmp);
+        variant (PipePipe);
+        variant (Plus);
+        variant (Minus);
+        variant (Star);
+        variant (Slash);
+        variant (Percent);
+        variant (PlusEq);
+        variant (MinusEq);
+        variant (StarEq);
+        variant (SlashEq);
+        variant (PercentEq);
+        variant (AndEq);
+        variant (OrEq);
+        variant (CarretEq);
+        variant (Bang);
+        variant (BangEq);
+        variant (EqEq);
+        variant (Lt);
+        variant (Gt);
+        variant (LtEq);
+        variant (GtEq);
+        variant (Carret);
+        variant (Unknown);
+        variant (Eof);
+    }
+
+#undef variant
+
+    __builtin_unreachable ();
+}
 
 }

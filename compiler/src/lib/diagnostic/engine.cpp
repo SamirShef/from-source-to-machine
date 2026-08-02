@@ -1,6 +1,7 @@
 #include "pebble/diagnostic/engine.h"
 #include "pebble/diagnostic/codes.h"
 #include "pebble/diagnostic/colors.h"
+#include <algorithm>
 #include <format>
 
 namespace pebble::diagnostic {
@@ -109,11 +110,11 @@ DiagnosticEngine::printAnnotation (
 
     std::cerr << std::string (maxLineWidth, ' ') << " | ";
     std::cerr << std::string (startLoc.Col - 1, ' ');
-    char highlighter = annotation.IsPrimary ? '^' : '-';
-    std::cerr << color::RED
-              << std::string (
-                     annotation.Span.End.Start - annotation.Span.Start.Start,
-                     highlighter);
+    char highlighter    = annotation.IsPrimary ? '^' : '-';
+    auto highlighterLen = std::min (
+        annotation.Span.End.Start - annotation.Span.Start.Start,
+        static_cast<std::uint32_t> (lineContent.size ()) - startLoc.Col + 1);
+    std::cerr << color::RED << std::string (highlighterLen, highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
 }
 
