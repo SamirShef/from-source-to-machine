@@ -177,12 +177,82 @@ Lexer::tokenizeCharLit () {
     return tok2 (CharLit, std::string_view (&_source[start], _pos - start), tokSpan);
 }
 
+// NOLINTBEGIN(readability-function-cognitive-complexity)
 Token
 Lexer::tokenizeOp () {
     auto start = _pos;
-    advance ();
-    return tok2 (Unknown, "", span (start, _pos));
+    auto kind  = TokenKind::Unknown;
+
+#define single(ch, tok_kind)                                                             \
+    case ch:                                                                             \
+        kind = TokenKind::tok_kind;                                                      \
+        break;
+
+#define pair(ch, next_ch, tok_match, tok_default)                                        \
+    case ch:                                                                             \
+        if (peek () == (next_ch)) {                                                      \
+            advance ();                                                                  \
+            kind = TokenKind::tok_match;                                                 \
+        } else {                                                                         \
+            kind = TokenKind::tok_default;                                               \
+        }                                                                                \
+        break;
+
+#define triple(ch, ch1, tok1, ch2, tok2, tok_default)                                    \
+    case ch:                                                                             \
+        if (peek () == (ch1)) {                                                          \
+            advance ();                                                                  \
+            kind = TokenKind::tok1;                                                      \
+        } else if (peek () == (ch2)) {                                                   \
+            advance ();                                                                  \
+            kind = TokenKind::tok2;                                                      \
+        } else {                                                                         \
+            kind = TokenKind::tok_default;                                               \
+        }                                                                                \
+        break;
+
+    switch (advance ()) {
+        single (';', Semi);
+        single (',', Comma);
+        single ('.', Dot);
+        single ('(', LParen);
+        single (')', RParen);
+        single ('{', LBrace);
+        single ('}', RBrace);
+        single ('[', LBracket);
+        single (']', RBracket);
+        single ('?', Question);
+        single (':', Colon);
+
+        pair ('=', '=', EqEq, Eq);
+        pair ('!', '=', BangEq, Bang);
+        pair ('+', '=', PlusEq, Plus);
+        pair ('-', '=', MinusEq, Minus);
+        pair ('*', '=', StarEq, Star);
+        pair ('/', '=', SlashEq, Slash);
+        pair ('%', '=', PercentEq, Percent);
+        pair ('^', '=', CarretEq, Carret);
+        pair ('<', '=', LtEq, Lt);
+        pair ('>', '=', GtEq, Gt);
+
+        triple ('&', '=', AndEq, '&', AmpAmp, Amp);
+        triple ('|', '=', OrEq, '|', PipePipe, Pipe);
+
+    default:
+        break;
+    }
+
+#undef triple
+#undef pair
+#undef single
+
+    return tok (
+        kind,
+        std::string_view (&_source[start], _pos - start),
+        span (start, _pos));
 }
+
+// NOLINTEND(readability-function-cognitive-complexity)
 
 void
 Lexer::skipComment () {
