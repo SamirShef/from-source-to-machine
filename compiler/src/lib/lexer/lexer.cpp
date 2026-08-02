@@ -3,7 +3,6 @@
 #include "pebble/diagnostic/codes.h"
 #include "pebble/lexer/keywords.h"
 #include <cctype>
-#include <cstdlib>
 
 namespace pebble {
 
@@ -28,6 +27,9 @@ Lexer::NextToken () {
 
     if (std::isalpha (peek ()) != 0) {
         return tokenizeIdOrKeyword ();
+    }
+    if (std::isdigit (peek ()) != 0 || peek () == '.') {
+        return tokenizeNumLit ();
     }
     if (peek () == '\"') {
         return tokenizeStrLit ();
@@ -54,8 +56,88 @@ Lexer::tokenizeIdOrKeyword () {
 
 Token
 Lexer::tokenizeNumLit () {
-    abort ();
+    auto start = _pos;
+    bool hasDot{};
+    while (std::isdigit (peek ()) != 0 || peek () == '.') {
+        if (peek () == '.') {
+            if (!hasDot) {
+                hasDot = true;
+            } else {
+                break;
+            }
+        }
+        advance ();
+    }
+    auto end  = _pos;
+    auto kind = tokenizeNumSuffix (hasDot);
+    return tok (kind, std::string_view (&_source[start], end - start), span (start, end));
 }
+
+#define match1(bits, prefix)                                                             \
+    if (peek () == #bits[0]) {                                                           \
+        kind = TokenKind::prefix##bits##Lit;                                             \
+        advance ();                                                                      \
+    }
+
+#define match2(bits, prefix)                                                             \
+    if (peek () == #bits[0] && peek (1) == #bits[1]) {                                   \
+        kind = TokenKind::prefix##bits##Lit;                                             \
+        advance ();                                                                      \
+        advance ();                                                                      \
+    }
+
+TokenKind
+Lexer::tokenizeNumSuffix (bool hasDot) {
+    auto kind = hasDot ? TokenKind::Float64Lit : TokenKind::IntLit;
+    switch (peek ()) {
+    case 'i':
+        advance ();
+        kind = tokenizeIntSuffix ();
+        break;
+    case 'u':
+        advance ();
+        kind = tokenizeUintSuffix ();
+        break;
+    case 'f':
+        advance ();
+        kind = tokenizeFloatSuffix ();
+        break;
+    default:
+        break;
+    }
+    return kind;
+}
+
+TokenKind
+Lexer::tokenizeIntSuffix () {
+    auto kind = TokenKind::IntLit;
+    match1 (8, Int);
+    match2 (16, Int);
+    match2 (32, Int);
+    match2 (64, Int);
+    return kind;
+}
+
+TokenKind
+Lexer::tokenizeUintSuffix () {
+    auto kind = TokenKind::IntLit;
+    match1 (8, Uint);
+    match2 (16, Uint);
+    match2 (32, Uint);
+    match2 (64, Uint);
+    return kind;
+}
+
+TokenKind
+Lexer::tokenizeFloatSuffix () {
+    TokenKind kind = TokenKind::Float64Lit;
+    match2 (32, Float);
+    match2 (64, Float);
+    return kind;
+}
+
+#undef match2
+#undef match1
 
 Token
 Lexer::tokenizeStrLit () {
@@ -149,8 +231,9 @@ Lexer::peek (int relPos) const {
     return _source[_pos + relPos];
 }
 
-#undef pos
-#undef span
+#undef tok2
 #undef tok
+#undef span
+#undef pos
 
 }
