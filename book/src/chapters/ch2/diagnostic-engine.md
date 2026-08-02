@@ -172,6 +172,11 @@ public:
         }
     }
 
+    basic::SourceMgr &
+    SourceMgr () {
+        return _mgr;
+    }
+
 private:
     void
     sortDiagSpans (DiagnosticBuilder &diag);
