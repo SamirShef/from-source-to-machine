@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstdlib>
 
 namespace pebble {
 
@@ -180,7 +181,7 @@ TokenKindToString (TokenKind kind) {
 
 #undef variant
 
-    __builtin_unreachable ();
+    abort ();
 }
 
 }

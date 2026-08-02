@@ -1,3 +1,7 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #include "pebble/diagnostic/engine.h"
 #include "pebble/diagnostic/codes.h"
 #include "pebble/diagnostic/colors.h"

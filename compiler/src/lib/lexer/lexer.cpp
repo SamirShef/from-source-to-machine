@@ -3,6 +3,7 @@
 #include "pebble/diagnostic/codes.h"
 #include "pebble/lexer/keywords.h"
 #include <cctype>
+#include <cstdlib>
 
 namespace pebble {
 
@@ -53,7 +54,7 @@ Lexer::tokenizeIdOrKeyword () {
 
 Token
 Lexer::tokenizeNumLit () {
-    __builtin_unreachable ();
+    abort ();
 }
 
 Token
