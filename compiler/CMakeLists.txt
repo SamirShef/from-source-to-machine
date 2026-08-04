@@ -1,14 +1,6 @@
-cmake_minimum_required(VERSION 3.20)
-project(pebble)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 file(GLOB_RECURSE PEBBLE_LIB_SRC "src/lib/*.cpp")
 add_library(pebble-core STATIC ${PEBBLE_LIB_SRC})
-target_include_directories(pebble-core PRIVATE include)
+target_include_directories(pebble-core PUBLIC include)
 
 add_executable(pebble src/main.cpp)
 target_include_directories(pebble PRIVATE include)

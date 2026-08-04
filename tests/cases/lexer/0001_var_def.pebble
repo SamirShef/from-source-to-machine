@@ -1,0 +1,6 @@
+// expect-token@+5: Var
+// expect-token@+4: Id "x"
+// expect-token@+3: Eq
+// expect-token@+2: IntLit "10"
+// expect-token@+1: Semi
+var x = 10;
