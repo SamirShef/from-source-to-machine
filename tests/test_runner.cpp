@@ -14,6 +14,8 @@
 
 using namespace pebble;
 
+enum class TestMode : std::uint8_t { Positive, Negative };
+
 struct ExpectedToken {
     std::uint32_t TargetLine;
     std::string   KindStr;
@@ -23,23 +25,52 @@ struct ExpectedToken {
     bool          Matched{};
 };
 
-static std::vector<ExpectedToken>
-ParseDirectives (const std::string &source) {
-    std::vector<ExpectedToken> expected;
-    std::istringstream         stream (source);
-    std::string                line;
-    std::uint32_t              currentLine = 1;
+struct ExpectedError {
+    std::uint32_t TargetLine;
+    std::string   KindStr;
+    std::string   Message;
+    bool          HasMessageCheck{};
+    std::uint32_t DirectiveLine;
+    bool          Matched{};
+};
 
-    static const std::regex DIRECTIVE_REGEX (
-        "(?://|/"
-        "\\*)\\s*expect-token(?:@([+-]?\\d+))?\\s*:\\s*([A-Za-z0-9_]+)(?:\\s+\"([^\"]*)"
-        "\")?");
+struct TestDirectives {
+    TestMode                   Mode = TestMode::Positive;
+    std::vector<ExpectedToken> ExpectedTokens;
+    std::vector<ExpectedError> ExpectedErrors;
+};
+
+static TestDirectives
+ParseDirectives (const std::string &source) {
+    TestDirectives     directives;
+    std::istringstream stream (source);
+    std::string        line;
+    std::uint32_t      currentLine = 1;
+
+    static const std::regex MODE_REGEX (R"((?://|/\*)\s*mode\s*:\s*(positive|negative))");
+
+    static const std::regex TOKEN_REGEX (
+        "(?://|/\\*)\\s*expect(?:ed)?-token(?:@([+-]?\\d+))?\\s*:\\s*([A-Za-z0-9_]+)(?:"
+        "\\s+\"([^\"]*)\")?");
+
+    static const std::regex ERROR_REGEX (
+        "(?://|/\\*)\\s*expect(?:ed)?-error(?:@([+-]?\\d+))?\\s*:\\s*([A-Za-z0-9_]+)(?:"
+        "\\s+\"([^\"]*)\"|\\s+(.+?))?\\s*(?:\\*/)?$");
 
     while (std::getline (stream, line)) {
-        std::smatch                 match;
-        std::string::const_iterator searchStart (line.cbegin ());
+        std::smatch match;
 
-        while (std::regex_search (searchStart, line.cend (), match, DIRECTIVE_REGEX)) {
+        if (std::regex_search (line, match, MODE_REGEX)) {
+            std::string modeStr = match[1].str ();
+            if (modeStr == "positive") {
+                directives.Mode = TestMode::Positive;
+            } else if (modeStr == "negative") {
+                directives.Mode = TestMode::Negative;
+            }
+        }
+
+        std::string::const_iterator searchStart (line.cbegin ());
+        while (std::regex_search (searchStart, line.cend (), match, TOKEN_REGEX)) {
             ExpectedToken exp{};
             exp.DirectiveLine = currentLine;
             exp.TargetLine    = currentLine;
@@ -56,13 +87,39 @@ ParseDirectives (const std::string &source) {
                 exp.HasValueCheck = true;
             }
 
-            expected.push_back (exp);
+            directives.ExpectedTokens.push_back (exp);
             searchStart = match[0].second;
         }
+
+        searchStart = line.cbegin ();
+        while (std::regex_search (searchStart, line.cend (), match, ERROR_REGEX)) {
+            ExpectedError exp{};
+            exp.DirectiveLine = currentLine;
+            exp.TargetLine    = currentLine;
+
+            if (match[1].matched) {
+                int offset     = std::stoi (match[1].str ());
+                exp.TargetLine = static_cast<std::uint32_t> (
+                    static_cast<int> (currentLine) + offset);
+            }
+
+            exp.KindStr = match[2].str ();
+            if (match[3].matched) {
+                exp.Message         = match[3].str ();
+                exp.HasMessageCheck = true;
+            } else if (match[4].matched && !match[4].str ().empty ()) {
+                exp.Message         = match[4].str ();
+                exp.HasMessageCheck = true;
+            }
+
+            directives.ExpectedErrors.push_back (exp);
+            searchStart = match[0].second;
+        }
+
         ++currentLine;
     }
 
-    return expected;
+    return directives;
 }
 
 static bool
@@ -149,6 +206,119 @@ VerifyTokens (
     return !hasErrors;
 }
 
+static bool
+VerifyDiagnostics (
+    const TestDirectives         &directives,
+    diagnostic::DiagnosticEngine &diag,
+    basic::SourceMgr             &mgr) {
+    bool hasFailed = false;
+
+    struct ActualDiag {
+        std::uint32_t Line;
+        std::string   KindStr;
+        std::string   Message;
+        bool          Matched{};
+    };
+
+    std::vector<ActualDiag> actualErrors;
+    for (auto &builder : diag.Builders ()) {
+        if (builder.Severity () != diagnostic::DiagSeverity::Error) {
+            continue;
+        }
+
+        std::uint32_t line = 0;
+        if (!builder.Annotations ().empty ()) {
+            auto startPos = builder.Annotations ()[0].Span.Start;
+            line          = mgr.FindLoc (startPos).Line;
+        }
+
+        actualErrors.push_back (
+            {
+                .Line    = line,
+                .KindStr = diagnostic::DiagCodeToString (builder.Code ()),
+                .Message = builder.Msg (),
+                .Matched = false,
+            });
+    }
+
+    if (directives.Mode == TestMode::Positive) {
+        if (!actualErrors.empty ()) {
+            std::cerr << std::format (
+                "[FAIL] Test mode is POSITIVE, but compiler produced {} error(s):\n",
+                actualErrors.size ());
+            for (const auto &err : actualErrors) {
+                std::cerr << std::format (
+                    "  - Line {}: [{}] {}\n",
+                    err.Line,
+                    err.KindStr,
+                    err.Message);
+            }
+            hasFailed = true;
+        }
+        if (!directives.ExpectedErrors.empty ()) {
+            std::cerr << "[FAIL] Test mode is POSITIVE, but contains 'expect-error' "
+                         "directives.\n";
+            hasFailed = true;
+        }
+    } else {
+        if (actualErrors.empty ()) {
+            std::cerr
+                << "[FAIL] Test mode is NEGATIVE, but compiler produced NO errors.\n";
+            hasFailed = true;
+        }
+
+        auto expectedErrors = directives.ExpectedErrors;
+        for (auto &exp : expectedErrors) {
+            bool found = false;
+
+            for (auto &act : actualErrors) {
+                if (act.Matched) {
+                    continue;
+                }
+
+                if (act.Line == exp.TargetLine && act.KindStr == exp.KindStr) {
+                    if (exp.HasMessageCheck
+                        && act.Message.find (exp.Message) == std::string::npos) {
+                        continue;
+                    }
+
+                    exp.Matched = true;
+                    act.Matched = true;
+                    found       = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                hasFailed = true;
+                std::cerr << std::format (
+                    "[FAIL] Directive at line {}: Expected error [{}]",
+                    exp.DirectiveLine,
+                    exp.KindStr);
+                if (exp.HasMessageCheck) {
+                    std::cerr << std::format (" \"{}\"", exp.Message);
+                }
+                std::cerr << std::format (
+                    " on line {} was not reported.\n",
+                    exp.TargetLine);
+            }
+        }
+
+        for (const auto &act : actualErrors) {
+            if (!act.Matched) {
+                hasFailed = true;
+                std::cerr << std::format (
+                    "[FAIL] Unexpected error reported at line {}: [{}] {}\n",
+                    act.Line,
+                    act.KindStr,
+                    act.Message);
+            }
+        }
+    }
+
+    return !hasFailed;
+}
+
 int
 main (int argc, char **argv) {
     if (argc < 2) {
@@ -168,7 +338,7 @@ main (int argc, char **argv) {
         std::istreambuf_iterator<char> ());
     file.close ();
 
-    auto expectedTokens = ParseDirectives (sourceContent);
+    auto directives = ParseDirectives (sourceContent);
 
     basic::SourceMgr             mgr;
     diagnostic::DiagnosticEngine diag (mgr);
@@ -178,7 +348,10 @@ main (int argc, char **argv) {
         return 1;
     }
 
-    if (VerifyTokens (expectedTokens, actualTokens, mgr)) {
+    bool tokensOk = VerifyTokens (directives.ExpectedTokens, actualTokens, mgr);
+    bool diagsOk  = VerifyDiagnostics (directives, diag, mgr);
+
+    if (tokensOk && diagsOk) {
         std::cout << std::format ("[PASSED] {}\n", testFilePath);
         return 0;
     }

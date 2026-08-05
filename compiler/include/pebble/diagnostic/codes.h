@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstdlib>
 
 namespace pebble::diagnostic {
 
@@ -26,5 +27,27 @@ constexpr inline DiagCode ERR_CODE_LAST
 
 constexpr inline DiagCode WARN_CODE_START = DiagCode::WUnusedVar;
 constexpr inline DiagCode WARN_CODE_LAST  = DiagCode::WLossPrecision;
+
+inline const char *
+DiagCodeToString (DiagCode code) {
+#define variant(kind)                                                                    \
+    case DiagCode::kind:                                                                 \
+        return #kind;
+
+    switch (code) {
+        variant (EUnexpectedToken);
+        variant (EExpectedExpr);
+        variant (EUnclosedStrLit);
+        variant (EUnclosedCharLit);
+        variant (EIncorrectCharLitLen);
+        variant (EIntSuffixForFloat);
+        variant (EInvalidNumSuffix);
+        variant (WUnusedVar);
+        variant (WLossPrecision);
+    }
+
+#undef variant
+    abort ();
+}
 
 }
