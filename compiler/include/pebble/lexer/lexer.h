@@ -47,6 +47,9 @@ private:
     Token
     tokenizeOp ();
 
+    char
+    parseEscapeSequence ();
+
     void
     skipComment ();
 
@@ -64,6 +67,25 @@ private:
 
     char
     peek (int relPos = 0) const;
+
+    static constexpr bool
+    isHexDigit (char c) noexcept {
+        return c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';
+    }
+
+    static constexpr bool
+    isOctalDigit (char c) noexcept {
+        return c >= '0' && c <= '7';
+    }
+
+    void
+    checkAndConsumeHexDigits (int digitCount);
+
+    void
+    checkAndConsumeUnicodeDigits (int digitCount);
+
+    void
+    checkAndConsumeOctalDigits (int digitCount);
 };
 
 }

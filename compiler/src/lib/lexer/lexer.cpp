@@ -143,9 +143,9 @@ Token
 Lexer::tokenizeStrLit () {
     auto start = _pos;
     advance (); // skip "
-    // clang-format off
-    while (peek() != '\0' && advance() != '\"') {}
-    // clang-format on
+    while (peek () != '\0' && peek () != '\"') {
+        parseEscapeSequence ();
+    }
     auto tokSpan = span (start, _pos);
     if (peek () == '\0') { // end of file
         _diag
@@ -155,6 +155,7 @@ Lexer::tokenizeStrLit () {
                 diagnostic::DiagSeverity::Error)
             .AddAnnotation (tokSpan);
     }
+    advance (); // skip "
     return tok2 (StrLit, std::string_view (&_source[start], _pos - start), tokSpan);
 }
 
@@ -162,9 +163,9 @@ Token
 Lexer::tokenizeCharLit () {
     auto start = _pos;
     advance (); // skip '
-    // clang-format off
-    while (peek() != '\0' && advance() != '\'') {}
-    // clang-format on
+    while (peek () != '\0' && peek () != '\'') {
+        parseEscapeSequence ();
+    }
     auto tokSpan = span (start, _pos);
     if (peek () == '\0') { // end of file
         _diag
@@ -174,6 +175,7 @@ Lexer::tokenizeCharLit () {
                 diagnostic::DiagSeverity::Error)
             .AddAnnotation (tokSpan);
     }
+    advance (); // skip '
     return tok2 (CharLit, std::string_view (&_source[start], _pos - start), tokSpan);
 }
 
@@ -254,6 +256,46 @@ Lexer::tokenizeOp () {
 
 // NOLINTEND(readability-function-cognitive-complexity)
 
+char
+Lexer::parseEscapeSequence () {
+    auto start = _pos;
+    char c     = advance ();
+    if (c == '\\') {
+        switch (advance ()) {
+        case 'n':
+        case 'r':
+        case 't':
+        case '\\':
+        case '\'':
+        case '\"':
+        case '0':
+        case 'b':
+        case 'a':
+        case 'f':
+        case 'v':
+            break;
+        case 'x':
+            checkAndConsumeHexDigits (2);
+            break;
+        case 'u':
+            checkAndConsumeUnicodeDigits (4);
+            break;
+        case 'o':
+            checkAndConsumeOctalDigits (3);
+            break;
+        default:
+            _diag
+                .Report (
+                    diagnostic::DiagCode::EInvalidEscapeSequence,
+                    std::string ("invalid escape sequence '\\") + peek (-1) + "'",
+                    diagnostic::DiagSeverity::Error)
+                .AddAnnotation (span (start, _pos), "unknown escape sequence");
+            break;
+        }
+    }
+    return c;
+}
+
 void
 Lexer::skipComment () {
     advance ();
@@ -299,6 +341,63 @@ Lexer::peek (int relPos) const {
         return '\0';
     }
     return _source[_pos + relPos];
+}
+
+void
+Lexer::checkAndConsumeHexDigits (int digitCount) {
+    auto start = _pos - 1;
+    int  count = 0;
+    while (isHexDigit (peek ())) {
+        advance ();
+        ++count;
+    }
+
+    if (count < digitCount) {
+        _diag
+            .Report (
+                diagnostic::DiagCode::EInvalidEscapeSequence,
+                "invalid hex escape",
+                diagnostic::DiagSeverity::Error)
+            .AddAnnotation (span (start, _pos), "expected 2 hex digits");
+    }
+}
+
+void
+Lexer::checkAndConsumeUnicodeDigits (int digitCount) {
+    auto start = _pos - 1;
+    int  count = 0;
+    while (isHexDigit (peek ())) {
+        advance ();
+        ++count;
+    }
+
+    if (count < digitCount) {
+        _diag
+            .Report (
+                diagnostic::DiagCode::EInvalidEscapeSequence,
+                "invalid unicode escape",
+                diagnostic::DiagSeverity::Error)
+            .AddAnnotation (span (start, _pos), "expected 4 hex digits");
+    }
+}
+
+void
+Lexer::checkAndConsumeOctalDigits (int digitCount) {
+    auto start = _pos - 1;
+    int  count = 0;
+    while (isOctalDigit (peek ())) {
+        advance ();
+        ++count;
+    }
+
+    if (count < digitCount) {
+        _diag
+            .Report (
+                diagnostic::DiagCode::EInvalidEscapeSequence,
+                "invalid octal escape",
+                diagnostic::DiagSeverity::Error)
+            .AddAnnotation (span (start, _pos), "expected 3 octal digits");
+    }
 }
 
 #undef tok2
