@@ -2,8 +2,6 @@
 #include "pebble/basic/source_mgr.h"
 #include "pebble/diagnostic/annotation.h"
 #include "pebble/diagnostic/builder.h"
-#include "pebble/diagnostic/colors.h"
-#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -87,6 +85,9 @@ private:
 
     void
     printAnnotation (const Annotation &annotation, std::uint32_t maxLineWidth);
+
+    static void
+    printHelp (const Help &help, std::uint32_t maxLineWidth);
 
     static void
     printNote (const Note &note, std::uint32_t maxLineWidth);

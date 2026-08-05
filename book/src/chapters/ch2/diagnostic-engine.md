@@ -198,6 +198,9 @@ private:
     printAnnotation (const Annotation &annotation, std::uint32_t maxLineWidth);
 
     static void
+    printHelp (const Help &help, std::uint32_t maxLineWidth);
+
+    static void
     printNote (const Note &note, std::uint32_t maxLineWidth);
 };
 $
@@ -303,6 +306,9 @@ DiagnosticEngine::printDiagnosticBody (DiagnosticBuilder &diag) {
         printAnnotation (annotation, maxLineWidth);
         std::cerr << std::string (maxLineWidth, ' ') << " |\n";
     }
+    for (const auto &help : diag.Helps ()) {
+        printHelp (help, maxLineWidth);
+    }
     for (const auto &note : diag.Notes ()) {
         printNote (note, maxLineWidth);
     }
@@ -328,6 +334,12 @@ DiagnosticEngine::printAnnotation (
         static_cast<std::uint32_t> (lineContent.size ()) - startLoc.Col + 1);
     std::cerr << color::RED << std::string (highlighterLen, highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
+}
+
+void
+DiagnosticEngine::printHelp (const Help &help, std::uint32_t maxLineWidth) {
+    std::cerr << color::RESET << std::string (maxLineWidth, ' ') << " = ";
+    std::cerr << color::CYAN << "help: " << color::RESET << help.Msg << '\n';
 }
 
 void
@@ -375,9 +387,16 @@ error[E0012]: variable 'x' is already defined
    `annotation.Span.End.Start - annotation.Span.Start.Start` и расстоянием от начала подчеркивания до конца
    строки (для того, чтобы подчеркивание случайно не вышло за пределы строки) и метка `annotation.Label`.
 
-#### Вывод примечаний (`printNote`)
+#### Вывод примечаний и подсказок (`printNote` и `printHelp`)
 
-После того как все строки кода с аннотациями отрисованы, `printDiagnosticBody` проходит по вектору примечаний `diag.Notes()`.
+После того как все строки кода с аннотациями отрисованы, `printDiagnosticBody` проходит по вектору подсказок (`diag.Helps()`) и примечаний (`diag.Notes()`).
+
+Для каждого объекта `Help` вызывается `printHelp`:
+
+1. Печатается отступ из `maxLineWidth` пробелов, чтобы знак равенства `=` встал ровно под колонкой, где раньше выводились разделители `|`.
+2. Выводится знак `=` с пробелами.
+3. Голубым цветом (`color::CYAN`) печатается префикс `help:`.
+4. После префикса сбрасывается цвет и выводится сам текст примечания `help.Msg`.
 
 Для каждого объекта `Note` вызывается `printNote`:
 

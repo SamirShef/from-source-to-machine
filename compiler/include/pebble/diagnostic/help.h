@@ -3,7 +3,7 @@
 
 namespace pebble::diagnostic {
 
-struct Note {
+struct Help {
     std::string Msg;
 };
 

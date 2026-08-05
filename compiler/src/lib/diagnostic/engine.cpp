@@ -96,6 +96,9 @@ DiagnosticEngine::printDiagnosticBody (DiagnosticBuilder &diag) {
         printAnnotation (annotation, maxLineWidth);
         std::cerr << std::string (maxLineWidth, ' ') << " |\n";
     }
+    for (const auto &help : diag.Helps ()) {
+        printHelp (help, maxLineWidth);
+    }
     for (const auto &note : diag.Notes ()) {
         printNote (note, maxLineWidth);
     }
@@ -120,6 +123,12 @@ DiagnosticEngine::printAnnotation (
         static_cast<std::uint32_t> (lineContent.size ()) - startLoc.Col + 1);
     std::cerr << color::RED << std::string (highlighterLen, highlighter);
     std::cerr << color::RESET << ' ' << annotation.Label << '\n';
+}
+
+void
+DiagnosticEngine::printHelp (const Help &help, std::uint32_t maxLineWidth) {
+    std::cerr << color::RESET << std::string (maxLineWidth, ' ') << " = ";
+    std::cerr << color::CYAN << "help: " << color::RESET << help.Msg << '\n';
 }
 
 void

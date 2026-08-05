@@ -6,7 +6,7 @@
 
 В реальном компиляторе фазы анализа (лексер, парсер, проверщик типов) не должны напрямую заниматься форматированием текста и раскрашиванием консоли. Их задача — лишь зафиксировать факт проблемы и перечислить связанные с ней участки кода.
 
-Для этого используется паттерн **Строитель** (`Diagnostic`uilder`). Он аккумулирует данные об ошибке, а отдельный модуль-рендер позже превращает этот набор данных в красивый текстовый отчёт или JSON для IDE.
+Для этого используется паттерн **Строитель** (`DiagnosticBuilder`). Он аккумулирует данные об ошибке, а отдельный модуль-рендер позже превращает этот набор данных в красивый текстовый отчёт или JSON для IDE.
 
 ## Анатомия диагностики и аннотации
 
@@ -16,7 +16,7 @@
 2. **Код ошибки (`DiagCode`):** Уникальный идентификатор (например, `E0012` или `W0001`).
 3. **Заголовок:** Краткое описание проблемы.
 4. **Список аннотаций (`Annotation`):** Подсветки участков кода с текстовыми подписями.
-5. **Список примечаний (`Note`):** Дополнительные текстовые пояснения.
+5. **Список подсказок (`Help`) и примечаний (`Note`):** Дополнительные текстовые пояснения.
 
 ### Первичные и вторичные аннотации (`IsPrimary`)
 
@@ -72,9 +72,22 @@ error[E0012]: variable 'x' is already defined
 
 Различие в символах (`-` для первого объявления и `^` для повторного) мгновенно направляет взгляд программиста на источник проблемы, сохраняя при этом важный контекст.
 
-## Примечания (`Note`) и коды ошибок
+## Примечания (`Note`), подсказки (`Help`) и коды ошибок
 
-Иногда ошибки требуют текстовых пояснений без привязки к конкретному диапазону кода. Для этого служит структура `Note`:
+Иногда ошибки требуют текстовых подсказок или пояснений без привязки к конкретному диапазону кода. Для этого служат структуры `Help` `Note`:
+
+```cpp
+$#pragma once
+$#include <string>
+$
+$namespace pebble::diagnostic {
+$
+struct Help {
+    std::string Msg;
+};
+$
+$}
+```
 
 ```cpp
 $#pragma once
@@ -133,6 +146,7 @@ $#pragma once
 $#include "pebble/diagnostic/annotation.h"
 $#include "pebble/diagnostic/codes.h"
 $#include "pebble/diagnostic/note.h"
+$#include "pebble/diagnostic/help.h"
 $#include "pebble/diagnostic/span.h"
 $#include <string>
 $#include <utility>
@@ -146,6 +160,7 @@ class DiagnosticBuilder {
     std::string             _msg;
     std::vector<Annotation> _annotations;
     std::vector<Note>       _notes;
+    std::vector<Help>       _helps;
 
 public:
     DiagnosticBuilder (DiagCode code, std::string msg, DiagSeverity severity)
@@ -161,6 +176,12 @@ public:
     AddAnnotation (
         basic::Pos start, basic::Pos end, std::string label = "", bool isPrimary = true) {
         return AddAnnotation (Span (start, end), std::move (label), isPrimary);
+    }
+
+    DiagnosticBuilder &
+    AddHelp (std::string text) {
+        _helps.emplace_back (Help{ std::move (text) });
+        return *this;
     }
 
     DiagnosticBuilder &
@@ -192,6 +213,11 @@ public:
     const std::vector<Annotation> &
     Annotations () const {
         return _annotations;
+    }
+
+    const std::vector<Help> &
+    Helps () const {
+        return _helps;
     }
 
     const std::vector<Note> &

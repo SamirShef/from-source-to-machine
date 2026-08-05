@@ -1,6 +1,7 @@
 #pragma once
 #include "pebble/diagnostic/annotation.h"
 #include "pebble/diagnostic/codes.h"
+#include "pebble/diagnostic/help.h"
 #include "pebble/diagnostic/note.h"
 #include "pebble/diagnostic/span.h"
 #include <string>
@@ -14,6 +15,7 @@ class DiagnosticBuilder {
     std::string             _msg;
     std::vector<Annotation> _annotations;
     std::vector<Note>       _notes;
+    std::vector<Help>       _helps;
 
 public:
     DiagnosticBuilder (DiagCode code, std::string msg, DiagSeverity severity)
@@ -37,6 +39,12 @@ public:
         return *this;
     }
 
+    DiagnosticBuilder &
+    AddHelp (std::string text) {
+        _helps.emplace_back (std::move (text));
+        return *this;
+    }
+
     DiagCode
     Code () const {
         return _code;
@@ -55,6 +63,11 @@ public:
     std::vector<Annotation> &
     Annotations () {
         return _annotations;
+    }
+
+    const std::vector<Help> &
+    Helps () const {
+        return _helps;
     }
 
     const std::vector<Note> &
