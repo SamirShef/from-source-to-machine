@@ -154,8 +154,9 @@ Lexer::tokenizeStrLit () {
                 "unclosed string literal",
                 diagnostic::DiagSeverity::Error)
             .AddAnnotation (tokSpan);
+    } else {
+        advance (); // skip "
     }
-    advance (); // skip "
     return tok2 (StrLit, std::string_view (&_source[start], _pos - start), tokSpan);
 }
 
@@ -174,8 +175,9 @@ Lexer::tokenizeCharLit () {
                 "unclosed character literal",
                 diagnostic::DiagSeverity::Error)
             .AddAnnotation (tokSpan);
+    } else {
+        advance (); // skip '
     }
-    advance (); // skip '
     return tok2 (CharLit, std::string_view (&_source[start], _pos - start), tokSpan);
 }
 
