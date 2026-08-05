@@ -28,7 +28,7 @@ Lexer::NextToken () {
     if (std::isalpha (peek ()) != 0 || peek () == '_') {
         return tokenizeIdOrKeyword ();
     }
-    if (std::isdigit (peek ()) != 0 || peek () == '.') {
+    if (std::isdigit (peek ()) != 0 || peek () == '.' && std::isdigit (peek (1)) != 0) {
         return tokenizeNumLit ();
     }
     if (peek () == '\"') {
