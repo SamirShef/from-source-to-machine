@@ -1,0 +1,4 @@
+// mode: negative
+// expect-error@+2: EInvalidEscapeSequence "invalid escape sequence '\\\n'"
+// expect-error@+1: EUnclosedStrLit "unclosed string literal"
+"abc\

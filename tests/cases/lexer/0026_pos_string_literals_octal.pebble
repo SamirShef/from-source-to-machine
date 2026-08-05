@@ -1,0 +1,4 @@
+// mode: positive
+// expect-token@+2: StrLit "\"Octal: \\o101\""
+// expect-token@+1: Semi ";"
+"Octal: \o101";

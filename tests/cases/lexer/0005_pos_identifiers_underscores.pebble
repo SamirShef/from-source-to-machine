@@ -1,0 +1,8 @@
+// mode: positive
+// expect-token@+6: Id "_"
+// expect-token@+5: Id "_a"
+// expect-token@+4: Id "__init__"
+// expect-token@+3: Id "A"
+// expect-token@+2: Id "z"
+// expect-token@+1: Semi ";"
+_ _a __init__ A z;

@@ -1,0 +1,8 @@
+// mode: positive
+// expect-token@+6: Var "var"
+// expect-token@+5: Id "x"
+// expect-token@+4: Colon ":"
+// expect-token@+3: Int64 "int64"
+// expect-token@+2: Eq "="
+// expect-token@+1: Int64Lit "100"
+var x: int64 = 100i64

@@ -1,0 +1,8 @@
+// mode: positive
+// expect-token@+6: AmpAmp "&&"
+// expect-token@+5: PipePipe "||"
+// expect-token@+4: Amp "&"
+// expect-token@+3: Pipe "|"
+// expect-token@+2: Carret "^"
+// expect-token@+1: Semi ";"
+&& || & | ^ ;

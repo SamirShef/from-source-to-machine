@@ -1,0 +1,5 @@
+// mode: positive
+// expect-token@+3: CharLit "'\\\o101'"
+// expect-token@+2: CharLit "'\\\o000'"
+// expect-token@+1: Semi ";"
+'\o101' '\o000';

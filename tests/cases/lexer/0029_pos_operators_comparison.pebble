@@ -1,0 +1,9 @@
+// mode: positive
+// expect-token@+7: EqEq "=="
+// expect-token@+6: BangEq "!="
+// expect-token@+5: Lt "<"
+// expect-token@+4: LtEq "<="
+// expect-token@+3: Gt ">"
+// expect-token@+2: GtEq ">="
+// expect-token@+1: Semi ";"
+== != < <= > >= ;

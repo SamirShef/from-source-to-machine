@@ -1,0 +1,11 @@
+// mode: positive
+// expect-token@+9: Fn "fn"
+// expect-token@+8: Id "main"
+// expect-token@+7: LParen "("
+// expect-token@+6: RParen ")"
+// expect-token@+5: LBrace "{"
+// expect-token@+4: Ret "return"
+// expect-token@+3: IntLit "0"
+// expect-token@+2: Semi ";"
+// expect-token@+1: RBrace "}"
+fn main() { return 0; }

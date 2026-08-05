@@ -1,0 +1,3 @@
+// mode: negative
+// expect-error@+1: EInvalidEscapeSequence "invalid octal escape"
+var s = "\o888";

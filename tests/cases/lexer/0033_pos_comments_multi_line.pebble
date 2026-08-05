@@ -1,0 +1,7 @@
+// mode: positive
+// expect-token@+5: Const "const"
+// expect-token@+4: Id "y"
+// expect-token@+3: Semi ";"
+/* Multi-line comment
+   spanning multiple lines */
+const y;

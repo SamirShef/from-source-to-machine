@@ -1,0 +1,7 @@
+// mode: positive
+// expect-token@+5: For "for"
+// expect-token@+4: LParen "("
+// expect-token@+3: Semi ";"
+// expect-token@+2: Semi ";"
+// expect-token@+1: RParen ")"
+for (;;)

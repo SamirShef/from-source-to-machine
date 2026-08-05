@@ -1,0 +1,18 @@
+// mode: positive
+// expect-token@+16: Fn "fn"
+// expect-token@+15: Id "add"
+// expect-token@+14: LParen "("
+// expect-token@+13: Id "a"
+// expect-token@+12: Colon ":"
+// expect-token@+11: Int32 "int32"
+// expect-token@+10: Comma ","
+// expect-token@+9: Id "b"
+// expect-token@+8: Colon ":"
+// expect-token@+7: Int32 "int32"
+// expect-token@+6: RParen ")"
+// expect-token@+5: Int32 "int32"
+// expect-token@+4: LBrace "{"
+// expect-token@+3: Ret "return"
+// expect-token@+2: Id "a"
+// expect-token@+1: Plus "+"
+fn add(a: int32, b: int32) int32 { return a +

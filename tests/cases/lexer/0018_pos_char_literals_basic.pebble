@@ -1,0 +1,7 @@
+// mode: positive
+// expect-token@+5: CharLit "'a'"
+// expect-token@+4: CharLit "'Z'"
+// expect-token@+3: CharLit "'0'"
+// expect-token@+2: CharLit "' '"
+// expect-token@+1: Semi ";"
+'a' 'Z' '0' ' ';

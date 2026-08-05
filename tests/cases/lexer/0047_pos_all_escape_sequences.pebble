@@ -1,0 +1,4 @@
+// mode: positive
+// expect-token@+2: StrLit "\"\\n\\r\\t\\\\\\'\\\"\\0\\b\\a\\f\\v\""
+// expect-token@+1: Semi ";"
+"\n\r\t\\\'\"\0\b\a\f\v";

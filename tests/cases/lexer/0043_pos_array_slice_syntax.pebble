@@ -1,0 +1,7 @@
+// mode: positive
+// expect-token@+5: Id "arr"
+// expect-token@+4: LBracket "["
+// expect-token@+3: IntLit "1"
+// expect-token@+2: RBracket "]"
+// expect-token@+1: Semi ";"
+arr[1];

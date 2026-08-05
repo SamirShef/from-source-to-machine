@@ -1,0 +1,8 @@
+// mode: positive
+// expect-token@+6: Id "foo"
+// expect-token@+5: Id "bar"
+// expect-token@+4: Id "_var"
+// expect-token@+3: Id "x123"
+// expect-token@+2: Id "a_b_c"
+// expect-token@+1: Semi ";"
+foo bar _var x123 a_b_c;

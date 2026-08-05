@@ -1,0 +1,3 @@
+// mode: negative
+// expect-error@+1: EUnclosedCharLit "unclosed character literal"
+'z

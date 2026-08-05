@@ -1,0 +1,13 @@
+// mode: positive
+// expect-token@+11: Int8Lit "1"
+// expect-token@+10: Uint8Lit "2"
+// expect-token@+9: Int16Lit "3"
+// expect-token@+8: Uint16Lit "4"
+// expect-token@+7: Int32Lit "5"
+// expect-token@+6: Uint32Lit "6"
+// expect-token@+5: Int64Lit "7"
+// expect-token@+4: Uint64Lit "8"
+// expect-token@+3: Float32Lit "9.0"
+// expect-token@+2: Float64Lit "10.0"
+// expect-token@+1: Semi ";"
+1i8 2u8 3i16 4u16 5i32 6u32 7i64 8u64 9.0f32 10.0f64;

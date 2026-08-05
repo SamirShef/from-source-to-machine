@@ -1,0 +1,4 @@
+// mode: positive
+// expect-token@+1: CharLit "'x\n'"
+'x
+'

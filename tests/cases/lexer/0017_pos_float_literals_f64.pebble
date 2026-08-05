@@ -1,0 +1,5 @@
+// mode: positive
+// expect-token@+3: Float64Lit "2.71828"
+// expect-token@+2: Float64Lit "1.0"
+// expect-token@+1: Semi ";"
+2.71828f64 1.0f64;

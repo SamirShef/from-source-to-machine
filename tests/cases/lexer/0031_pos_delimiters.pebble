@@ -1,0 +1,12 @@
+// mode: positive
+// expect-token@+10: Semi ";"
+// expect-token@+9: Comma ","
+// expect-token@+8: Dot "."
+// expect-token@+7: LParen "("
+// expect-token@+6: RParen ")"
+// expect-token@+5: LBrace "{"
+// expect-token@+4: RBrace "}"
+// expect-token@+3: LBracket "["
+// expect-token@+2: RBracket "]"
+// expect-token@+1: Semi ";"
+; , . ( ) { } [ ] ;

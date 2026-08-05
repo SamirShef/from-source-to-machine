@@ -1,0 +1,6 @@
+// mode: positive
+// expect-token@+4: CharLit "'\\\x41'"
+// expect-token@+3: CharLit "'\\\x00'"
+// expect-token@+2: CharLit "'\\\xFF'"
+// expect-token@+1: Semi ";"
+'\x41' '\x00' '\xFF';

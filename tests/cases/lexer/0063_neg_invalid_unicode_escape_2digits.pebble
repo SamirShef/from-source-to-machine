@@ -1,0 +1,3 @@
+// mode: negative
+// expect-error@+1: EInvalidEscapeSequence "invalid unicode escape"
+var s = "\u00";

@@ -1,0 +1,12 @@
+// mode: positive
+// expect-token@+10: Plus "+"
+// expect-token@+9: Minus "-"
+// expect-token@+8: Star "*"
+// expect-token@+7: Slash "/"
+// expect-token@+6: Percent "%"
+// expect-token@+5: Eq "="
+// expect-token@+4: Bang "!"
+// expect-token@+3: Question "?"
+// expect-token@+2: Colon ":"
+// expect-token@+1: Semi ";"
++ - * / % = ! ? : ;

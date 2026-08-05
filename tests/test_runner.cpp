@@ -47,6 +47,63 @@ struct ActualDiag {
     bool          Matched{};
 };
 
+static std::string
+UnescapeString (const std::string &input) {
+    std::string result;
+    result.reserve (input.size ());
+    for (std::size_t i = 0; i < input.size (); ++i) {
+        if (input[i] == '\\' && i + 1 < input.size ()) {
+#define variant(val, res)                                                                \
+    case val:                                                                            \
+        result += (res);                                                                 \
+        break;
+            switch (input[i + 1]) {
+            case 'n':
+                result += '\n';
+                break;
+            case 'r':
+                result += '\r';
+                break;
+            case 't':
+                result += '\t';
+                break;
+            case '\\':
+                result += '\\';
+                break;
+            case '\'':
+                result += '\'';
+                break;
+            case '"':
+                result += '"';
+                break;
+            case '0':
+                result += '\0';
+                break;
+            case 'b':
+                result += '\b';
+                break;
+            case 'a':
+                result += '\a';
+                break;
+            case 'f':
+                result += '\f';
+                break;
+            case 'v':
+                result += '\v';
+                break;
+            default:
+                result += input[i + 1];
+                break;
+#undef variant
+            }
+            ++i;
+        } else {
+            result += input[i];
+        }
+    }
+    return result;
+}
+
 static TestDirectives
 ParseDirectives (const std::string &source) {
     TestDirectives     directives;
@@ -58,11 +115,11 @@ ParseDirectives (const std::string &source) {
 
     static const std::regex TOKEN_REGEX (
         "(?://|/\\*)\\s*expect(?:ed)?-token(?:@([+-]?\\d+))?\\s*:\\s*([A-Za-z0-9_]+)(?:"
-        "\\s+\"([^\"]*)\")?");
+        "\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?");
 
     static const std::regex ERROR_REGEX (
         "(?://|/\\*)\\s*expect(?:ed)?-error(?:@([+-]?\\d+))?\\s*:\\s*([A-Za-z0-9_]+)(?:"
-        "\\s+\"([^\"]*)\"|\\s+(.+?))?\\s*(?:\\*/)?$");
+        "\\s+\"((?:[^\"\\\\]|\\\\.)*)\"|\\s+(.+?))?\\s*(?:\\*/)?$");
 
     while (std::getline (stream, line)) {
         std::smatch match;
@@ -90,7 +147,7 @@ ParseDirectives (const std::string &source) {
 
             exp.KindStr = match[2].str ();
             if (match[3].matched) {
-                exp.Value         = match[3].str ();
+                exp.Value         = UnescapeString (match[3].str ());
                 exp.HasValueCheck = true;
             }
 
@@ -112,10 +169,10 @@ ParseDirectives (const std::string &source) {
 
             exp.KindStr = match[2].str ();
             if (match[3].matched) {
-                exp.Message         = match[3].str ();
+                exp.Message         = UnescapeString (match[3].str ());
                 exp.HasMessageCheck = true;
             } else if (match[4].matched && !match[4].str ().empty ()) {
-                exp.Message         = match[4].str ();
+                exp.Message         = UnescapeString (match[4].str ());
                 exp.HasMessageCheck = true;
             }
 

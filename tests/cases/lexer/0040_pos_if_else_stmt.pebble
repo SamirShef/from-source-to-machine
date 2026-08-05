@@ -1,0 +1,8 @@
+// mode: positive
+// expect-token@+6: If "if"
+// expect-token@+5: LParen "("
+// expect-token@+4: BoolLit "true"
+// expect-token@+3: RParen ")"
+// expect-token@+2: LBrace "{"
+// expect-token@+1: RBrace "}"
+if (true) {}

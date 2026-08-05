@@ -1,0 +1,9 @@
+// mode: positive
+// expect-token@+7: If "if"
+// expect-token@+6: Else "else"
+// expect-token@+5: For "for"
+// expect-token@+4: Break "break"
+// expect-token@+3: Continue "continue"
+// expect-token@+2: Ret "return"
+// expect-token@+1: Semi ";"
+if else for break continue return;

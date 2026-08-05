@@ -1,0 +1,6 @@
+// mode: positive
+// expect-token@+4: StrLit "\"hello\""
+// expect-token@+3: StrLit "\"world\""
+// expect-token@+2: StrLit "\"\""
+// expect-token@+1: Semi ";"
+"hello" "world" "";

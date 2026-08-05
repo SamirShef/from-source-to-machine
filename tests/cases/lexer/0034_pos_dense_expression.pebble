@@ -1,0 +1,12 @@
+// mode: positive
+// expect-token@+10: Id "a"
+// expect-token@+9: Plus "+"
+// expect-token@+8: Id "b"
+// expect-token@+7: Star "*"
+// expect-token@+6: Id "c"
+// expect-token@+5: Slash "/"
+// expect-token@+4: Id "d"
+// expect-token@+3: Minus "-"
+// expect-token@+2: Id "e"
+// expect-token@+1: Semi ";"
+a+b*c/d-e;

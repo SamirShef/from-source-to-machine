@@ -1,0 +1,9 @@
+// mode: positive
+// expect-token@+7: Var "var"
+// expect-token@+6: Const "const"
+// expect-token@+5: Fn "fn"
+// expect-token@+4: Struct "struct"
+// expect-token@+3: Import "import"
+// expect-token@+2: Extern "extern"
+// expect-token@+1: Semi ";"
+var const fn struct import extern;

@@ -1,0 +1,4 @@
+// mode: positive
+// expect-token@+2: StrLit "\"Hex: \\x41, Unicode: \\u0041\""
+// expect-token@+1: Semi ";"
+"Hex: \x41, Unicode: \u0041";

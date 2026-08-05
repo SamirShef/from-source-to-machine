@@ -1,0 +1,5 @@
+// mode: positive
+// expect-token@+3: Uint64Lit "18446744073709551615"
+// expect-token@+2: Uint64Lit "0"
+// expect-token@+1: Semi ";"
+18446744073709551615u64 0u64;

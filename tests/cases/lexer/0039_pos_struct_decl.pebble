@@ -1,0 +1,7 @@
+// mode: positive
+// expect-token@+5: Struct "struct"
+// expect-token@+4: Id "Point"
+// expect-token@+3: LBrace "{"
+// expect-token@+2: Id "x"
+// expect-token@+1: Colon ":"
+struct Point { x:

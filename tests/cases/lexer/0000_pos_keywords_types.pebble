@@ -1,0 +1,15 @@
+// mode: positive
+// expect-token@+13: Bool "bool"
+// expect-token@+12: Char "char"
+// expect-token@+11: Int8 "int8"
+// expect-token@+10: Uint8 "uint8"
+// expect-token@+9: Int16 "int16"
+// expect-token@+8: Uint16 "uint16"
+// expect-token@+7: Int32 "int32"
+// expect-token@+6: Uint32 "uint32"
+// expect-token@+5: Int64 "int64"
+// expect-token@+4: Uint64 "uint64"
+// expect-token@+3: Float32 "float32"
+// expect-token@+2: Float64 "float64"
+// expect-token@+1: Semi ";"
+bool char int8 uint8 int16 uint16 int32 uint32 int64 uint64 float32 float64;

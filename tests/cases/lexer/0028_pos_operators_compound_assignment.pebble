@@ -1,0 +1,11 @@
+// mode: positive
+// expect-token@+9: PlusEq "+="
+// expect-token@+8: MinusEq "-="
+// expect-token@+7: StarEq "*="
+// expect-token@+6: SlashEq "/="
+// expect-token@+5: PercentEq "%="
+// expect-token@+4: AndEq "&="
+// expect-token@+3: OrEq "|="
+// expect-token@+2: CarretEq "^="
+// expect-token@+1: Semi ";"
++= -= *= /= %= &= |= ^= ;

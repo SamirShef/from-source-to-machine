@@ -1,0 +1,4 @@
+// mode: positive
+// expect-token@+2: Unknown "@"
+// expect-token@+1: Unknown "$"
+@$

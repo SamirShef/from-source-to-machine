@@ -1,0 +1,6 @@
+// mode: positive
+// expect-token@+4: BoolLit "true"
+// expect-token@+3: BoolLit "false"
+// expect-token@+2: Nil "nil"
+// expect-token@+1: Semi ";"
+true false nil;

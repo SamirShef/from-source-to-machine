@@ -1,0 +1,5 @@
+// mode: positive
+// expect-token@+3: Import "import"
+// expect-token@+2: StrLit "\"math\""
+// expect-token@+1: Semi ";"
+import "math";

@@ -1,0 +1,3 @@
+// mode: positive
+// expect-token@+1: Unknown "`"
+`

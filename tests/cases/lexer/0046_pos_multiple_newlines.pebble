@@ -1,0 +1,8 @@
+// mode: positive
+// expect-token@+2: Var "var"
+
+var
+
+// expect-token@+2: Id "y"
+
+y;
