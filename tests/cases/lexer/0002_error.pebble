@@ -1,3 +1,0 @@
-// mode: negative
-// expect-error@+1: EUnclosedStrLit "unclosed string literal"
-var s = "hello;

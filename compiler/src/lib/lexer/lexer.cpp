@@ -25,7 +25,7 @@ Lexer::NextToken () {
         return NextToken ();
     }
 
-    if (std::isalpha (peek ()) != 0) {
+    if (std::isalpha (peek ()) != 0 || peek () == '_') {
         return tokenizeIdOrKeyword ();
     }
     if (std::isdigit (peek ()) != 0 || peek () == '.') {
@@ -43,7 +43,7 @@ Lexer::NextToken () {
 Token
 Lexer::tokenizeIdOrKeyword () {
     auto start = _pos;
-    while (std::isalnum (peek ()) != 0) {
+    while (std::isalnum (peek ()) != 0 || peek () == '_') {
         advance ();
     }
     std::string_view val (&_source[start], _pos - start);
