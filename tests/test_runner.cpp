@@ -40,6 +40,13 @@ struct TestDirectives {
     std::vector<ExpectedError> ExpectedErrors;
 };
 
+struct ActualDiag {
+    std::uint32_t Line;
+    std::string   KindStr;
+    std::string   Message;
+    bool          Matched{};
+};
+
 static TestDirectives
 ParseDirectives (const std::string &source) {
     TestDirectives     directives;
@@ -206,20 +213,8 @@ VerifyTokens (
     return !hasErrors;
 }
 
-static bool
-VerifyDiagnostics (
-    const TestDirectives         &directives,
-    diagnostic::DiagnosticEngine &diag,
-    basic::SourceMgr             &mgr) {
-    bool hasFailed = false;
-
-    struct ActualDiag {
-        std::uint32_t Line;
-        std::string   KindStr;
-        std::string   Message;
-        bool          Matched{};
-    };
-
+static std::vector<ActualDiag>
+GetActualErrors (diagnostic::DiagnosticEngine &diag, basic::SourceMgr &mgr) {
     std::vector<ActualDiag> actualErrors;
     for (auto &builder : diag.Builders ()) {
         if (builder.Severity () != diagnostic::DiagSeverity::Error) {
@@ -232,89 +227,106 @@ VerifyDiagnostics (
             line          = mgr.FindLoc (startPos).Line;
         }
 
-        actualErrors.push_back (
-            {
-                .Line    = line,
-                .KindStr = diagnostic::DiagCodeToString (builder.Code ()),
-                .Message = builder.Msg (),
-                .Matched = false,
-            });
+        actualErrors.emplace_back (
+            line,
+            diagnostic::DiagCodeToString (builder.Code ()),
+            builder.Msg (),
+            false);
+    }
+    return actualErrors;
+}
+
+static bool
+VerifyPositiveDiagnostic (
+    std::vector<ActualDiag> &actualErrors, const TestDirectives &directives) {
+    if (!actualErrors.empty ()) {
+        std::cerr << std::format (
+            "[FAIL] Test mode is POSITIVE, but compiler produced {} error(s):\n",
+            actualErrors.size ());
+        for (const auto &err : actualErrors) {
+            std::cerr << std::format (
+                "  - Line {}: [{}] {}\n",
+                err.Line,
+                err.KindStr,
+                err.Message);
+        }
+        return true;
+    }
+    if (!directives.ExpectedErrors.empty ()) {
+        std::cerr << "[FAIL] Test mode is POSITIVE, but contains 'expect-error' "
+                     "directives.\n";
+        return true;
+    }
+    return false;
+}
+
+static bool
+VerifyNegativeDiagnostic (
+    std::vector<ActualDiag> &actualErrors, const TestDirectives &directives) {
+    if (actualErrors.empty ()) {
+        std::cerr << "[FAIL] Test mode is NEGATIVE, but compiler produced NO errors.\n";
+        return true;
     }
 
-    if (directives.Mode == TestMode::Positive) {
-        if (!actualErrors.empty ()) {
-            std::cerr << std::format (
-                "[FAIL] Test mode is POSITIVE, but compiler produced {} error(s):\n",
-                actualErrors.size ());
-            for (const auto &err : actualErrors) {
-                std::cerr << std::format (
-                    "  - Line {}: [{}] {}\n",
-                    err.Line,
-                    err.KindStr,
-                    err.Message);
+    auto expectedErrors = directives.ExpectedErrors;
+    for (auto &exp : expectedErrors) {
+        bool found = false;
+
+        for (auto &act : actualErrors) {
+            if (act.Matched) {
+                continue;
             }
-            hasFailed = true;
-        }
-        if (!directives.ExpectedErrors.empty ()) {
-            std::cerr << "[FAIL] Test mode is POSITIVE, but contains 'expect-error' "
-                         "directives.\n";
-            hasFailed = true;
-        }
-    } else {
-        if (actualErrors.empty ()) {
-            std::cerr
-                << "[FAIL] Test mode is NEGATIVE, but compiler produced NO errors.\n";
-            hasFailed = true;
-        }
 
-        auto expectedErrors = directives.ExpectedErrors;
-        for (auto &exp : expectedErrors) {
-            bool found = false;
-
-            for (auto &act : actualErrors) {
-                if (act.Matched) {
+            if (act.Line == exp.TargetLine && act.KindStr == exp.KindStr) {
+                if (exp.HasMessageCheck
+                    && act.Message.find (exp.Message) == std::string::npos) {
                     continue;
                 }
 
-                if (act.Line == exp.TargetLine && act.KindStr == exp.KindStr) {
-                    if (exp.HasMessageCheck
-                        && act.Message.find (exp.Message) == std::string::npos) {
-                        continue;
-                    }
-
-                    exp.Matched = true;
-                    act.Matched = true;
-                    found       = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                hasFailed = true;
-                std::cerr << std::format (
-                    "[FAIL] Directive at line {}: Expected error [{}]",
-                    exp.DirectiveLine,
-                    exp.KindStr);
-                if (exp.HasMessageCheck) {
-                    std::cerr << std::format (" \"{}\"", exp.Message);
-                }
-                std::cerr << std::format (
-                    " on line {} was not reported.\n",
-                    exp.TargetLine);
+                exp.Matched = true;
+                act.Matched = true;
+                found       = true;
+                break;
             }
         }
 
-        for (const auto &act : actualErrors) {
-            if (!act.Matched) {
-                hasFailed = true;
-                std::cerr << std::format (
-                    "[FAIL] Unexpected error reported at line {}: [{}] {}\n",
-                    act.Line,
-                    act.KindStr,
-                    act.Message);
+        if (!found) {
+            std::cerr << std::format (
+                "[FAIL] Directive at line {}: Expected error [{}]",
+                exp.DirectiveLine,
+                exp.KindStr);
+            if (exp.HasMessageCheck) {
+                std::cerr << std::format (" \"{}\"", exp.Message);
             }
+            std::cerr << std::format (" on line {} was not reported.\n", exp.TargetLine);
+            return true;
         }
     }
+
+    for (const auto &act : actualErrors) {
+        if (!act.Matched) {
+            std::cerr << std::format (
+                "[FAIL] Unexpected error reported at line {}: [{}] {}\n",
+                act.Line,
+                act.KindStr,
+                act.Message);
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool
+VerifyDiagnostics (
+    const TestDirectives         &directives,
+    diagnostic::DiagnosticEngine &diag,
+    basic::SourceMgr             &mgr) {
+
+    auto actualErrors = GetActualErrors (diag, mgr);
+
+    bool hasFailed = directives.Mode == TestMode::Positive
+                         ? VerifyPositiveDiagnostic (actualErrors, directives)
+                         : VerifyNegativeDiagnostic (actualErrors, directives);
 
     return !hasFailed;
 }
