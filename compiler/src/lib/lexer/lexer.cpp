@@ -325,9 +325,9 @@ Lexer::skipSingleComment () {
 
 void
 Lexer::skipSpaces () {
-    // clang-format off
-    while (std::isspace(advance()) == 0) {}
-    // clang-format on
+    while (std::isspace (peek ()) != 0) {
+        advance ();
+    }
 }
 
 char
