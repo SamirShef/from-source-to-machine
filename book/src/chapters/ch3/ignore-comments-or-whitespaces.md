@@ -5,7 +5,7 @@
 
 ## Невидимки
 
-Начнем с пробелов. Допишем `compiler/include/lexer/lexer.h`:
+Начнем с пробелов. Допишем `compiler/include/pebble/lexer/lexer.h`:
 
 ```cpp
 $#pragma once
@@ -88,7 +88,7 @@ Lexer::NextToken () {
 
 Комментарии пропускать будет чуть сложнее, потому что комментарии могут быть однострочными и многострочными.
 В Pebble комментарии будут как в `C` (`//` --- однострочные, `/* */` --- многострочные).
-`compiler/include/lexer/lexer.h`:
+`compiler/include/pebble/lexer/lexer.h`:
 
 ```cpp
 $#pragma once
