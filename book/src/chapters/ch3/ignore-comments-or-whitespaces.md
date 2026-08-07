@@ -5,9 +5,11 @@
 
 ## Невидимки
 
-Начнем с пробелов. Допишем `compiler/include/pebble/lexer/lexer.h`:
+Начнем с пробелов.
 
 ```cpp
+// include/pebble/lexer/lexer.h
+
 $#pragma once
 $#include "pebble/diagnostic/engine.h"
 $#include "pebble/lexer/token.h"
@@ -44,9 +46,10 @@ $}
 ```
 
 Метод `skipSpaces` будет пропускать любые пробельные символы в кодировке ASCII.
-`compiler/src/lexer/lexer.cpp`:
 
 ```cpp
+// src/lib/lexer/lexer.cpp
+
 void
 Lexer::skipSpaces () {
     while (std::isspace (peek ()) != 0) {
@@ -60,6 +63,8 @@ Lexer::skipSpaces () {
 `skipSpaces`:
 
 ```cpp
+// src/lib/lexer/lexer.cpp
+
 Token
 Lexer::NextToken () {
     if (peek () == '\0') {
@@ -88,9 +93,10 @@ Lexer::NextToken () {
 
 Комментарии пропускать будет чуть сложнее, потому что комментарии могут быть однострочными и многострочными.
 В Pebble комментарии будут как в `C` (`//` --- однострочные, `/* */` --- многострочные).
-`compiler/include/pebble/lexer/lexer.h`:
 
 ```cpp
+// include/pebble/lexer/lexer.h
+
 $#pragma once
 $#include "pebble/diagnostic/engine.h"
 $#include "pebble/lexer/token.h"
@@ -136,9 +142,10 @@ $}
 ```
 
 `skipComment` является мостом между `skipSingleComment` и `skipMultilineComment`
-(`compiler/src/lexer/lexe.cpp`):
 
 ```cpp
+// src/lib/lexer/lexer.cpp
+
 void
 Lexer::skipComment () {
     advance (); // Пропускаем первый '/'
@@ -179,6 +186,8 @@ Lexer::skipSingleComment () {
 Теперь научим `NextToken` видеть начало комментариев и пропускать их:
 
 ```cpp
+// src/lib/lexer/lexer.cpp
+
 Token
 Lexer::NextToken () {
     if (peek () == '\0') {

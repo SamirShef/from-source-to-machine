@@ -31,9 +31,11 @@ var y: uint8 = 10; // 10 выведется как тип uint8
 токена `TokenKind::IntLit`. Он ставится на числа с "плавающей длиной" --- компилятор сам выявит длину (тип)
 числа из контекста.
 
-Теперь исходя из этой информации дополним `TokenKind` (`compiler/include/pebble/lexer/token_kind.h`):
+Теперь исходя из этой информации дополним `TokenKind`:
 
 ```cpp
+// include/pebble/lexer/token_kind.h
+
 $#pragma once
 $#include <cstdint>
 $

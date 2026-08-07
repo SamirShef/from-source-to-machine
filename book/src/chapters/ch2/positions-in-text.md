@@ -14,6 +14,8 @@
 простую структуру `Loc` (от *Location*):
 
 ```cpp
+// include/pebble/basic/loc.h
+
 $#pragma once
 $#include <cstdint>
 $
@@ -36,6 +38,8 @@ $}
 Поэтому для внутренней работы компилятора мы введём более лёгкую структуру --- `Pos` (от *Position*):
 
 ```cpp
+// include/pebble/basic/pos.h
+
 $#pragma once
 $#include <compare>
 $#include <cstdint>
@@ -73,6 +77,8 @@ $}
 называется **`Span`** (или диапазоном):
 
 ```cpp
+// include/pebble/diagnostic/span.h
+
 $#pragma once
 $#include "pebble/basic/pos.h"
 $

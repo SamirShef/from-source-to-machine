@@ -28,9 +28,11 @@ fn main(): int32 {
 
 ## Токены
 
-Токены должны быть легковесной структурой без лишней информации (`compiler/include/token.h`):
+Токены должны быть легковесной структурой без лишней информации:
 
 ```cpp
+// include/pebble/lexer/token.h
+
 $#pragma once
 $#include "pebble/diagnostic/span.h"
 $#include "pebble/lexer/token_kind.h"
@@ -54,9 +56,11 @@ $}
 хранит свой вид из исходного кода. Файлы исходного кода живут в `SourceMgr`, а значит если брать слайс
 из буферов, то он всегда будет валидным. Это позволит нам экономить память и ускорит компилятор.
 
-`TokenKind` --- это тип токена. `compiler/include/pebble/lexer/token_kind.h`:
+`TokenKind` --- это тип токена.
 
 ```cpp
+// include/pebble/lexer/token_kind.h
+
 $#pragma once
 $#include <cstdint>
 $
@@ -97,9 +101,10 @@ $}
 находится (`_fileId` и `_pos`). Это нужно для позиционирования токенов. Чтобы лексер знал, какой символ
 он анализирует, нужно передать ему содержимое файла (`_source`). А чтобы выбрасывать ошибки передадим ему
 ещё и движок диагностики (по ссылке, чтобы состояние движка изменялось).
-`compiler/include/pebble/lexer/lexer.h`:
 
 ```cpp
+// include/pebble/lexer/lexer.h
+
 $#pragma once
 $#include "pebble/diagnostic/engine.h"
 $#include "pebble/lexer/token.h"
@@ -139,9 +144,11 @@ $}
 `_pos + relPos` выходит за пределы `_source` (возвращает `\0`).
 
 Метод `advance` нужен для того, чтобы пропустить текущий символ и **вернуть его же**. Это читаемый шорткат
-для записи `++_pos` (пропуск символа). `compiler/src/lexer/lexer.cpp`:
+для записи `++_pos` (пропуск символа).
 
 ```cpp
+// src/lib/lexer/lexer.cpp
+
 $#include "pebble/lexer/lexer.h"
 $#include "pebble/basic/pos.h"
 $#include "pebble/diagnostic/codes.h"
@@ -192,6 +199,8 @@ $}
 ## Тестовый запуск
 
 ```cpp
+// src/main.cpp
+
 $#include "pebble/basic/loc.h"
 $#include "pebble/basic/pos.h"
 $#include "pebble/basic/source_mgr.h"

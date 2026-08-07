@@ -53,5 +53,66 @@
 * Утилита Graphviz (команда `dot`) --- она понадобится нам в главах по CFG, чтобы визуализировать графы
 управления программой в виде наглядных PNG/SVG-диаграмм.
 
+## Структура и скрипт сборки
+
+Вот примерная структура репозитория книги:
+
+```text
+from-source-to-machine/
+├── compiler/              # Исходный код самого компилятора
+│   ├── include/           # Публичные заголовочные файлы
+│   └── src/               # Файлы реализации (.cpp)
+├── tests/                 # Тесты
+├── CMakeLists.txt         # Главный скрипт сборки
+└── README.md
+```
+
+Но ваш проект --- это не книга. Поэтому структура упрощается до:
+
+```text
+mylang/
+├── include/               # Публичные заголовочные файлы
+├── src/                   # Файлы реализации (.cpp)
+│   ├── lib/               # Библиотека компилятора
+│   └── main.cpp           # Точка входа
+├── tests/                 # Тесты
+├── CMakeLists.txt         # Главный скрипт сборки
+└── README.md
+```
+
+Современные языки программирования специально проектируются модульными, чтобы их легко можно было
+использовать как библиотеку. Зачем? Чтобы писать инструменты для языка (форматтеры, LSP, линтеры) нужно
+давать компилятору решить какую-то задачу: построить синтаксис, найти ошибки и т. д. Для этого нужно
+линковать компилятор как библиотеку, но без `int main`. Поэтому в `src/` `lib/` и `main.cpp` отдельно друг
+от друга.
+
+Чтобы собирать текущий компилятор напишем вот такой скрипт сборки:
+
+```cmake
+# CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.20)
+project(pebble)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+file(GLOB_RECURSE PEBBLE_LIB_SRC "src/lib/*.cpp")
+add_library(pebble-core STATIC ${PEBBLE_LIB_SRC})
+target_include_directories(pebble-core PUBLIC include)
+
+add_executable(pebble src/main.cpp)
+target_include_directories(pebble PRIVATE include)
+target_link_libraries(pebble PRIVATE pebble-core)
+```
+
+Он собирает всё из `src/lib/`, линкует в статическую библиотеку `pebble-core`. Эту библиотеку можно будет
+использовать в дальнейшем для инструментов. Затем скрипт линкует `pebble-core` с `main.cpp` и так получается
+`pebble` --- компилятор языка Pebble.
+
 Теперь, когда карта маршрута перед глазами и инструменты подготовлены, мы готовы перейти к
 архитектуре компилятора и лексическому анализу!
