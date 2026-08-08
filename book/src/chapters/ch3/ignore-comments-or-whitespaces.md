@@ -224,3 +224,100 @@ Lexer::NextToken () {
 
 Если вы хотите поддержку вложенных комментариев, то внутри `skipSingleComment` и `skipMultilineComment`
 нужно проверять то же самое, что и в `NextToken` и рекурсивно вызывать `skipComment`.
+
+## Фатальная ошибка
+
+Кажется, что такой простой этап уже позади, но нет. Лексер запросто уйдёт в вечный цикл, как только ему
+попадется код:
+
+```pebble
+// comment
+```
+
+или
+
+```pebble
+/*
+    unclosed comment
+```
+
+Проблема не очевидна --- когда цикл упрётся в конец файла, `peek ()` и `advance ()` начнут возвращать `\0`.
+Из-за того, что мы не проверяем выходы за пределы буфера (файла), цикл не остановится.
+
+Исправить это можно добавлением метода `isAtEnd ()` и договоренностью --- **каждый `while` в лексере должен
+проверять, что он не выходит за пределы буфера (`!isAtEnd ()`)**.
+
+```cpp
+// include/pebble/lexer/lexer.h
+
+$#pragma once
+$#include "pebble/diagnostic/engine.h"
+$#include "pebble/lexer/token.h"
+$
+$namespace pebble {
+$
+class Lexer {
+    diagnostic::DiagnosticEngine &_diag;
+    std::uint32_t                 _fileId;
+    std::uint32_t                 _pos{};
+    const std::string            &_source;
+
+public:
+    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
+        : _diag (diag),
+          _fileId (fileId),
+          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
+
+    Token
+    NextToken ();
+
+private:
+    void
+    skipComment ();
+
+    void
+    skipMultilineComment ();
+
+    void
+    skipSingleComment ();
+
+    void
+    skipSpaces ();
+
+    char
+    advance ();
+
+    char
+    peek (int relPos = 0) const;
+
+    constexpr bool
+    isAtEnd () {
+        return _pos >= _source.size ();
+    }
+};
+$
+$}
+```
+
+```cpp
+// src/lib/lexer/lexer.cpp
+
+void
+Lexer::skipMultilineComment () {
+    while (!isAtEnd () && (peek (-1) != '/' || peek (-2) != '*')) {
+        advance ();
+    }
+}
+
+void
+Lexer::skipSingleComment () {
+    while (!isAtEnd() && advance () != '\n') {}
+}
+
+void
+Lexer::skipSpaces () {
+    while (!isAtEnd () && std::isspace (peek ()) != 0) {
+        advance ();
+    }
+}
+```

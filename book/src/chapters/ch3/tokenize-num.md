@@ -160,7 +160,7 @@ Token
 Lexer::tokenizeNumLit () {
     auto start = _pos;
     bool hasDot{};
-    while (std::isdigit (peek ()) != 0 || peek () == '.') {
+    while (!isAtEnd() && (std::isdigit (peek ()) != 0 || peek () == '.')) {
         if (peek () == '.') {
             if (!hasDot) {
                 hasDot = true;
@@ -179,7 +179,7 @@ Lexer::tokenizeNumLit () {
 
 void
 Lexer::skipNumSuffix () {
-    while (std::isalnum (peek ()) != 0) {
+    while (!isAtEnd () && std::isalnum (peek ()) != 0) {
         advance ();
     }
 }
