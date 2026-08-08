@@ -176,8 +176,8 @@ $namespace pebble::diagnostic {
 $
 class DiagnosticBuilder {
     DiagCode                _code;
-    DiagSeverity            _severity;
     std::string             _msg;
+    DiagSeverity            _severity;
     std::vector<Annotation> _annotations;
     std::vector<Note>       _notes;
     std::vector<Help>       _helps;
