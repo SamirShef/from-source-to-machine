@@ -1,5 +1,5 @@
 // mode: positive
-// expect-token@+3: Uint16Lit "65535"
-// expect-token@+2: Uint16Lit "0"
+// expect-token@+3: IntLit "65535u16"
+// expect-token@+2: IntLit "0u16"
 // expect-token@+1: Semi ";"
 65535u16 0u16;
