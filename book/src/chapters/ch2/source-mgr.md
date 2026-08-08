@@ -88,12 +88,12 @@ class SourceMgr {
 public:
     std::uint32_t
     AddFile (const std::string &name, const std::string &content) {
-        std::uint32_t              id = static_cast<std::uint32_t>(_files.size ());
+        auto                       id = static_cast<std::uint32_t> (_files.size ());
         std::vector<std::uint32_t> lineStarts{ 0 }; // Первая строка всегда начинается с 0-го байта
 
         for (std::size_t i = 0; i < content.size (); ++i) {
             if (content[i] == '\n') {
-                lineStarts.push_back (static_cast<std::uint32_t>(i + 1));
+                lineStarts.push_back (static_cast<std::uint32_t> (i + 1));
             }
         }
 
@@ -119,10 +119,10 @@ public:
         auto it = std::ranges::upper_bound (file.LineStarts, pos.Start);
 
         // Индекс найденного элемента в массиве идеально совпадает с 1-based номером нашей строки!
-        std::uint32_t line = static_cast<std::uint32_t>(std::distance (file.LineStarts.begin (), it));
-
-        std::uint32_t lineStartOffset = file.LineStarts[line - 1];
-        std::uint32_t col             = pos.Start - lineStartOffset + 1;
+        auto line
+            = static_cast<std::uint32_t> (std::distance (file.LineStarts.begin (), it));
+        auto lineStartOffset = file.LineStarts[line - 1];
+        auto col             = pos.Start - lineStartOffset + 1;
 
         return { line, col };
     }
