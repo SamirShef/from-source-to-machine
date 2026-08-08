@@ -87,7 +87,7 @@ Lexer::tokenizeStrLit () {
     auto start = _pos;
     advance (); // skip "
     while (!isAtEnd () && peek () != '\"') {
-        parseEscapeSequence ();
+        skipEscapeSequence ();
     }
     auto tokSpan = span (start, _pos);
     if (peek () == '\0') { // end of file
@@ -108,7 +108,7 @@ Lexer::tokenizeCharLit () {
     auto start = _pos;
     advance (); // skip '
     while (!isAtEnd () && peek () != '\'') {
-        parseEscapeSequence ();
+        skipEscapeSequence ();
     }
     auto tokSpan = span (start, _pos);
     if (peek () == '\0') { // end of file
@@ -201,10 +201,10 @@ Lexer::tokenizeOp () {
 
 // NOLINTEND(readability-function-cognitive-complexity)
 
-char
-Lexer::parseEscapeSequence () {
+void
+Lexer::skipEscapeSequence () {
     auto start = _pos;
-    char c     = advance ();
+    auto c     = advance ();
     if (c == '\\') {
         switch (advance ()) {
         case 'n':
@@ -238,7 +238,6 @@ Lexer::parseEscapeSequence () {
             break;
         }
     }
-    return c;
 }
 
 void

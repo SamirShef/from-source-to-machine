@@ -38,8 +38,8 @@ private:
     Token
     tokenizeOp ();
 
-    char
-    parseEscapeSequence ();
+    void
+    skipEscapeSequence ();
 
     void
     skipComment ();
