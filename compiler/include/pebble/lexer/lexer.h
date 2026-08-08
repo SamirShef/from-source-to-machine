@@ -26,17 +26,8 @@ private:
     Token
     tokenizeNumLit ();
 
-    TokenKind
-    tokenizeNumSuffix (bool hasDot);
-
-    TokenKind
-    tokenizeIntSuffix ();
-
-    TokenKind
-    tokenizeUintSuffix ();
-
-    TokenKind
-    tokenizeFloatSuffix ();
+    void
+    skipNumSuffix ();
 
     Token
     tokenizeStrLit ();

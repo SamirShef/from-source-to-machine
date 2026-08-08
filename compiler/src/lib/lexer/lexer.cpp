@@ -68,86 +68,20 @@ Lexer::tokenizeNumLit () {
         }
         advance ();
     }
-    auto kind = tokenizeNumSuffix (hasDot);
+    auto kind = hasDot ? TokenKind::FloatLit : TokenKind::IntLit;
+    skipNumSuffix ();
     return tok (
         kind,
         std::string_view (&_source[start], _pos - start),
         span (start, _pos));
 }
 
-#define match1(bits, prefix)                                                             \
-    if (peek () == #bits[0]) {                                                           \
-        kind = TokenKind::prefix##Lit;                                                   \
-        advance ();                                                                      \
-    }
-
-#define match2(bits, prefix)                                                             \
-    if (peek () == #bits[0] && peek (1) == #bits[1]) {                                   \
-        kind = TokenKind::prefix##Lit;                                                   \
-        advance ();                                                                      \
-        advance ();                                                                      \
-    }
-
-#define int_match1(bits) match1 (bits, Int);
-#define int_match2(bits) match2 (bits, Int);
-
-#define float_match2(bits) match2 (bits, Float);
-
-TokenKind
-Lexer::tokenizeNumSuffix (bool hasDot) {
-    auto kind = hasDot ? TokenKind::FloatLit : TokenKind::IntLit;
-    switch (peek ()) {
-    case 'i':
+void
+Lexer::skipNumSuffix () {
+    while (std::isalnum (peek ()) != 0) {
         advance ();
-        kind = tokenizeIntSuffix ();
-        break;
-    case 'u':
-        advance ();
-        kind = tokenizeUintSuffix ();
-        break;
-    case 'f':
-        advance ();
-        kind = tokenizeFloatSuffix ();
-        break;
-    default:
-        break;
     }
-    return kind;
 }
-
-TokenKind
-Lexer::tokenizeIntSuffix () {
-    auto kind = TokenKind::IntLit;
-    int_match1 (8);
-    int_match2 (16);
-    int_match2 (32);
-    int_match2 (64);
-    return kind;
-}
-
-TokenKind
-Lexer::tokenizeUintSuffix () {
-    auto kind = TokenKind::IntLit;
-    int_match1 (8);
-    int_match2 (16);
-    int_match2 (32);
-    int_match2 (64);
-    return kind;
-}
-
-TokenKind
-Lexer::tokenizeFloatSuffix () {
-    TokenKind kind = TokenKind::FloatLit;
-    float_match2 (32);
-    float_match2 (64);
-    return kind;
-}
-
-#undef float_match2
-#undef int_match2
-#undef int_match1
-#undef match2
-#undef match1
 
 Token
 Lexer::tokenizeStrLit () {
