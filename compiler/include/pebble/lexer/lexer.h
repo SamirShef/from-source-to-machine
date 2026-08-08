@@ -59,6 +59,11 @@ private:
     char
     peek (int relPos = 0) const;
 
+    constexpr bool
+    isAtEnd () {
+        return _pos >= _source.size ();
+    }
+
     static constexpr bool
     isHexDigit (char c) noexcept {
         return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');

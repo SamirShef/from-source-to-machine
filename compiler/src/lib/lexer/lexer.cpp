@@ -43,7 +43,7 @@ Lexer::NextToken () {
 Token
 Lexer::tokenizeIdOrKeyword () {
     auto start = _pos;
-    while (std::isalnum (peek ()) != 0 || peek () == '_') {
+    while (!isAtEnd () && (std::isalnum (peek ()) != 0 || peek () == '_')) {
         advance ();
     }
     std::string_view val (&_source[start], _pos - start);
@@ -58,7 +58,7 @@ Token
 Lexer::tokenizeNumLit () {
     auto start = _pos;
     bool hasDot{};
-    while (std::isdigit (peek ()) != 0 || peek () == '.') {
+    while (!isAtEnd () && (std::isdigit (peek ()) != 0 || peek () == '.')) {
         if (peek () == '.') {
             if (!hasDot) {
                 hasDot = true;
@@ -77,7 +77,7 @@ Lexer::tokenizeNumLit () {
 
 void
 Lexer::skipNumSuffix () {
-    while (std::isalnum (peek ()) != 0) {
+    while (!isAtEnd () && std::isalnum (peek ()) != 0) {
         advance ();
     }
 }
@@ -86,7 +86,7 @@ Token
 Lexer::tokenizeStrLit () {
     auto start = _pos;
     advance (); // skip "
-    while (peek () != '\0' && peek () != '\"') {
+    while (!isAtEnd () && peek () != '\"') {
         parseEscapeSequence ();
     }
     auto tokSpan = span (start, _pos);
@@ -107,7 +107,7 @@ Token
 Lexer::tokenizeCharLit () {
     auto start = _pos;
     advance (); // skip '
-    while (peek () != '\0' && peek () != '\'') {
+    while (!isAtEnd () && peek () != '\'') {
         parseEscapeSequence ();
     }
     auto tokSpan = span (start, _pos);
@@ -254,7 +254,7 @@ Lexer::skipComment () {
 
 void
 Lexer::skipMultilineComment () {
-    while (peek (-1) != '/' || peek (-2) != '*') {
+    while (!isAtEnd () && (peek (-1) != '/' || peek (-2) != '*')) {
         advance ();
     }
 }
@@ -262,13 +262,13 @@ Lexer::skipMultilineComment () {
 void
 Lexer::skipSingleComment () {
     // clang-format off
-    while (advance () != '\n') {}
+    while (!isAtEnd() && advance () != '\n') {}
     // clang-format on
 }
 
 void
 Lexer::skipSpaces () {
-    while (std::isspace (peek ()) != 0) {
+    while (!isAtEnd () && std::isspace (peek ()) != 0) {
         advance ();
     }
 }
@@ -292,7 +292,7 @@ void
 Lexer::checkAndConsumeHexDigits (int digitCount) {
     auto start = _pos - 1;
     int  count = 0;
-    while (isHexDigit (peek ())) {
+    while (!isAtEnd () && isHexDigit (peek ())) {
         advance ();
         ++count;
     }
@@ -311,7 +311,7 @@ void
 Lexer::checkAndConsumeUnicodeDigits (int digitCount) {
     auto start = _pos - 1;
     int  count = 0;
-    while (isHexDigit (peek ())) {
+    while (!isAtEnd () && isHexDigit (peek ())) {
         advance ();
         ++count;
     }
@@ -330,7 +330,7 @@ void
 Lexer::checkAndConsumeOctalDigits (int digitCount) {
     auto start = _pos - 1;
     int  count = 0;
-    while (isOctalDigit (peek ())) {
+    while (!isAtEnd () && isOctalDigit (peek ())) {
         advance ();
         ++count;
     }
