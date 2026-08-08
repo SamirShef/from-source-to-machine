@@ -5,7 +5,7 @@
 // expect-token@+6: RParen ")"
 // expect-token@+5: LBrace "{"
 // expect-token@+4: Ret "return"
-// expect-token@+3: IntLit "0"
+// expect-token@+3: NumLit "0"
 // expect-token@+2: Semi ";"
 // expect-token@+1: RBrace "}"
 fn main() { return 0; }

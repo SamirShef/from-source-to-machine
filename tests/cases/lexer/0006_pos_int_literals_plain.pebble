@@ -1,6 +1,6 @@
 // mode: positive
-// expect-token@+4: IntLit "0"
-// expect-token@+3: IntLit "42"
-// expect-token@+2: IntLit "1000000"
+// expect-token@+4: NumLit "0"
+// expect-token@+3: NumLit "42"
+// expect-token@+2: NumLit "1000000"
 // expect-token@+1: Semi ";"
 0 42 1000000;

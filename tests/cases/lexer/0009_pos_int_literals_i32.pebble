@@ -1,5 +1,5 @@
 // mode: positive
-// expect-token@+3: IntLit "2147483647i32"
-// expect-token@+2: IntLit "0i32"
+// expect-token@+3: NumLit "2147483647i32"
+// expect-token@+2: NumLit "0i32"
 // expect-token@+1: Semi ";"
 2147483647i32 0i32;

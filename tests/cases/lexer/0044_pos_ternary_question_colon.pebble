@@ -1,8 +1,8 @@
 // mode: positive
 // expect-token@+6: Id "cond"
 // expect-token@+5: Question "?"
-// expect-token@+4: IntLit "1"
+// expect-token@+4: NumLit "1"
 // expect-token@+3: Colon ":"
-// expect-token@+2: IntLit "2"
+// expect-token@+2: NumLit "2"
 // expect-token@+1: Semi ";"
 cond ? 1 : 2;

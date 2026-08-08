@@ -1,5 +1,5 @@
 // mode: positive
-// expect-token@+3: FloatLit "3.14f32"
-// expect-token@+2: FloatLit "0.0f32"
+// expect-token@+3: NumLit "3.14f32"
+// expect-token@+2: NumLit "0.0f32"
 // expect-token@+1: Semi ";"
 3.14f32 0.0f32;

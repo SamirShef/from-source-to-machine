@@ -34,11 +34,10 @@ enum class TokenKind : std::uint8_t {
     Import,   // keyword `import`
     Extern,   // keyword `extern`
 
-    BoolLit,  // bool literal
-    CharLit,  // character literal
-    IntLit,   // integer literal
-    FloatLit, // floating literal
-    StrLit,   // string literal
+    BoolLit, // bool literal
+    CharLit, // character literal
+    NumLit,  // any numeric literal
+    StrLit,  // string literal
 
     Semi,      // `;`
     Comma,     // `,`
@@ -117,8 +116,7 @@ TokenKindToString (TokenKind kind) {
         variant (Extern);
         variant (BoolLit);
         variant (CharLit);
-        variant (IntLit);
-        variant (FloatLit);
+        variant (NumLit);
         variant (StrLit);
         variant (Semi);
         variant (Comma);

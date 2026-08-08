@@ -68,10 +68,9 @@ Lexer::tokenizeNumLit () {
         }
         advance ();
     }
-    auto kind = hasDot ? TokenKind::FloatLit : TokenKind::IntLit;
     skipNumSuffix ();
     return tok (
-        kind,
+        TokenKind::NumLit,
         std::string_view (&_source[start], _pos - start),
         span (start, _pos));
 }

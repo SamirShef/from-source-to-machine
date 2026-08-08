@@ -4,5 +4,5 @@
 // expect-token@+4: Colon ":"
 // expect-token@+3: Int64 "int64"
 // expect-token@+2: Eq "="
-// expect-token@+1: IntLit "100i64"
+// expect-token@+1: NumLit "100i64"
 var x: int64 = 100i64

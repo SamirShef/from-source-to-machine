@@ -2,10 +2,10 @@
 // expect-token@+9: LParen "("
 // expect-token@+8: Id "x"
 // expect-token@+7: Plus "+"
-// expect-token@+6: IntLit "1"
+// expect-token@+6: NumLit "1"
 // expect-token@+5: RParen ")"
 // expect-token@+4: LBracket "["
-// expect-token@+3: IntLit "0"
+// expect-token@+3: NumLit "0"
 // expect-token@+2: RBracket "]"
 // expect-token@+1: Semi ";"
 (x+1)[0];
