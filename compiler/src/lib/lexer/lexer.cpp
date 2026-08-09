@@ -20,15 +20,16 @@ Lexer::NextToken () {
         skipComment ();
         return NextToken ();
     }
-    if (std::isspace (peek ()) != 0) {
+    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         skipSpaces ();
         return NextToken ();
     }
 
-    if (std::isalpha (peek ()) != 0 || peek () == '_') {
+    if (std::isalpha (static_cast<unsigned char> (peek ())) != 0 || peek () == '_') {
         return tokenizeIdOrKeyword ();
     }
-    if (std::isdigit (peek ()) != 0 || peek () == '.' && std::isdigit (peek (1)) != 0) {
+    if (std::isdigit (static_cast<unsigned char> (peek ())) != 0
+        || peek () == '.' && std::isdigit (static_cast<unsigned char> (peek (1))) != 0) {
         return tokenizeNumLit ();
     }
     if (peek () == '\"') {
@@ -43,7 +44,9 @@ Lexer::NextToken () {
 Token
 Lexer::tokenizeIdOrKeyword () {
     auto start = _pos;
-    while (!isAtEnd () && (std::isalnum (peek ()) != 0 || peek () == '_')) {
+    while (
+        !isAtEnd ()
+        && (std::isalnum (static_cast<unsigned char> (peek ())) != 0 || peek () == '_')) {
         advance ();
     }
     std::string_view val (&_source[start], _pos - start);
@@ -58,7 +61,9 @@ Token
 Lexer::tokenizeNumLit () {
     auto start = _pos;
     bool hasDot{};
-    while (!isAtEnd () && (std::isdigit (peek ()) != 0 || peek () == '.')) {
+    while (
+        !isAtEnd ()
+        && (std::isdigit (static_cast<unsigned char> (peek ())) != 0 || peek () == '.')) {
         if (peek () == '.') {
             if (!hasDot) {
                 hasDot = true;
@@ -77,7 +82,7 @@ Lexer::tokenizeNumLit () {
 
 void
 Lexer::skipNumSuffix () {
-    while (!isAtEnd () && std::isalnum (peek ()) != 0) {
+    while (!isAtEnd () && std::isalnum (static_cast<unsigned char> (peek ())) != 0) {
         advance ();
     }
 }
@@ -267,7 +272,7 @@ Lexer::skipSingleComment () {
 
 void
 Lexer::skipSpaces () {
-    while (!isAtEnd () && std::isspace (peek ()) != 0) {
+    while (!isAtEnd () && std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         advance ();
     }
 }
