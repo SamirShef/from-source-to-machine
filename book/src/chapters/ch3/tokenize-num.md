@@ -124,13 +124,13 @@ Lexer::NextToken () {
         skipComment ();
         return NextToken ();
     }
-    if (std::isspace (peek ()) != 0) {
+    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         skipSpaces ();
         return NextToken ();
     }
 
-    if (std::isdigit (peek ()) != 0                          // Десятичная цифра
-        || peek () == '.' && std::isdigit (peek (1)) != 0) { // Или точка, после которой идет десятичная цифра
+    if (std::isdigit (static_cast<unsigned char> (peek ())) != 0 // Десятичная цифра
+        || peek () == '.' && std::isdigit (peek (1)) != 0) {     // Или точка, после которой идет десятичная цифра
         return tokenizeNumLit ();
     }
 }
@@ -165,7 +165,7 @@ Token
 Lexer::tokenizeNumLit () {
     auto start = _pos;
     bool hasDot{};
-    while (!isAtEnd() && (std::isdigit (peek ()) != 0 || peek () == '.')) {
+    while (!isAtEnd() && (std::isdigit (static_cast<unsigned char> (peek ())) != 0 || peek () == '.')) {
         if (peek () == '.') {
             if (!hasDot) {
                 hasDot = true;
@@ -184,7 +184,7 @@ Lexer::tokenizeNumLit () {
 
 void
 Lexer::skipNumSuffix () {
-    while (!isAtEnd () && std::isalnum (peek ()) != 0) {
+    while (!isAtEnd () && std::isalnum (static_cast<unsigned char> (peek ())) != 0) {
         advance ();
     }
 }

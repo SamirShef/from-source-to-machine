@@ -52,7 +52,7 @@ $}
 
 void
 Lexer::skipSpaces () {
-    while (std::isspace (peek ()) != 0) {
+    while (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         advance ();
     }
 }
@@ -70,7 +70,7 @@ Lexer::NextToken () {
     if (peek () == '\0') {
         return tok2 (Eof, "", span (_pos, _pos));
     }
-    if (std::isspace (peek ()) != 0) {
+    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         skipSpaces ();
         return NextToken ();
     }
@@ -197,7 +197,7 @@ Lexer::NextToken () {
         skipComment ();
         return NextToken ();
     }
-    if (std::isspace (peek ()) != 0) {
+    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         skipSpaces ();
         return NextToken ();
     }
@@ -302,6 +302,21 @@ $}
 ```cpp
 // src/lib/lexer/lexer.cpp
 
+Token
+Lexer::NextToken () {
+    if (isAtEnd ()) {
+        return tok2 (Eof, "", span (_pos, _pos));
+    }
+    if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
+        skipComment ();
+        return NextToken ();
+    }
+    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
+        skipSpaces ();
+        return NextToken ();
+    }
+}
+
 void
 Lexer::skipMultilineComment () {
     while (!isAtEnd () && (peek (-1) != '/' || peek (-2) != '*')) {
@@ -316,7 +331,7 @@ Lexer::skipSingleComment () {
 
 void
 Lexer::skipSpaces () {
-    while (!isAtEnd () && std::isspace (peek ()) != 0) {
+    while (!isAtEnd () && std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         advance ();
     }
 }
