@@ -13,7 +13,7 @@ namespace pebble {
 
 Token
 Lexer::NextToken () {
-    if (peek () == '\0') {
+    if (isAtEnd ()) {
         return tok2 (Eof, "", span (_pos, _pos));
     }
     if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
