@@ -129,8 +129,10 @@ Lexer::NextToken () {
         return NextToken ();
     }
 
-    if (std::isdigit (static_cast<unsigned char> (peek ())) != 0 // Десятичная цифра
-        || peek () == '.' && std::isdigit (peek (1)) != 0) {     // Или точка, после которой идет десятичная цифра
+        // Десятичная цифра
+    if (std::isdigit (static_cast<unsigned char> (peek ())) != 0
+        // Или точка, после которой идет десятичная цифра
+        || peek () == '.' && std::isdigit (static_cast<unsigned char> (peek (1))) != 0) {
         return tokenizeNumLit ();
     }
 }
