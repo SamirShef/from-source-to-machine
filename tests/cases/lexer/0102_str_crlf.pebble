@@ -1,0 +1,6 @@
+// mode: negative
+// expect-error@+2: EUnclosedStrLit unclosed string literal
+fn main() {
+    var s = "Unclosed CRLF string
+    var x = 10;
+}

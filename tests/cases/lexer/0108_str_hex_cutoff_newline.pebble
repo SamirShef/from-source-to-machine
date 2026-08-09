@@ -1,0 +1,8 @@
+// mode: negative
+// expect-error@+4: EInvalidEscapeSequence invalid hex escape
+// expect-error@+3: EUnclosedStrLit unclosed string literal
+// expect-error@+3: EUnclosedStrLit unclosed string literal
+fn main() {
+    var hex = "\x1
+";
+}

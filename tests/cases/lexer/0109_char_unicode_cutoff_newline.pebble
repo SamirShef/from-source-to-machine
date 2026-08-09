@@ -1,0 +1,8 @@
+// mode: negative
+// expect-error@+4: EInvalidEscapeSequence invalid unicode escape
+// expect-error@+3: EUnclosedCharLit unclosed character literal
+// expect-error@+3: EUnclosedCharLit unclosed character literal
+fn main() {
+    var u = '\u12
+';
+}

@@ -1,0 +1,7 @@
+// mode: negative
+// expect-error@+3: EUnclosedCharLit unclosed character literal
+// expect-error@+3: EUnclosedCharLit unclosed character literal
+fn main() {
+    var empty_char = '
+';
+}

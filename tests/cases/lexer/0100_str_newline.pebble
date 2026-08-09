@@ -1,0 +1,7 @@
+// mode: negative
+// expect-error@+3: EUnclosedStrLit unclosed string literal
+// expect-error@+3: EUnclosedStrLit unclosed string literal
+fn main() {
+    var msg = "Hello,
+    world!";
+}

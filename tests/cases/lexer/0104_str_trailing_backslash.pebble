@@ -1,0 +1,8 @@
+// mode: negative
+// expect-error@+4: EInvalidEscapeSequence unfinished escape sequence
+// expect-error@+3: EUnclosedStrLit unclosed string literal
+// expect-error@+3: EUnclosedStrLit unclosed string literal
+fn main() {
+    var path = "C:\
+";
+}

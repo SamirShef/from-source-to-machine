@@ -91,11 +91,11 @@ Token
 Lexer::tokenizeStrLit () {
     auto start = _pos;
     advance (); // skip "
-    while (!isAtEnd () && peek () != '\"') {
+    while (!isAtEnd () && peek () != '\"' && peek () != '\n' && peek () != '\r') {
         skipEscapeSequence ();
     }
     auto tokSpan = span (start, _pos);
-    if (peek () == '\0') { // end of file
+    if (isAtEnd () || peek () == '\n' || peek () == '\r') {
         _diag
             .Report (
                 diagnostic::DiagCode::EUnclosedStrLit,
@@ -112,11 +112,11 @@ Token
 Lexer::tokenizeCharLit () {
     auto start = _pos;
     advance (); // skip '
-    while (!isAtEnd () && peek () != '\'') {
+    while (!isAtEnd () && peek () != '\'' && peek () != '\n' && peek () != '\r') {
         skipEscapeSequence ();
     }
     auto tokSpan = span (start, _pos);
-    if (peek () == '\0') { // end of file
+    if (isAtEnd () || peek () == '\n' || peek () == '\r') {
         _diag
             .Report (
                 diagnostic::DiagCode::EUnclosedCharLit,
@@ -211,6 +211,18 @@ Lexer::skipEscapeSequence () {
     auto start = _pos;
     auto c     = advance ();
     if (c == '\\') {
+        if (isAtEnd () || peek () == '\n' || peek () == '\r') {
+            _diag
+                .Report (
+                    diagnostic::DiagCode::EInvalidEscapeSequence,
+                    "unfinished escape sequence",
+                    diagnostic::DiagSeverity::Error)
+                .AddAnnotation (
+                    span (start, _pos),
+                    "expected escape character before newline");
+            return;
+        }
+
         switch (advance ()) {
         case 'n':
         case 'r':

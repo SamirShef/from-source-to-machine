@@ -1,0 +1,6 @@
+// mode: negative
+// expect-error@+2: EUnclosedCharLit unclosed character literal
+fn main() {
+    var c = 'a
+    var y = 20;
+}

@@ -1,4 +1,5 @@
-// mode: positive
-// expect-token@+1: CharLit "'x\n'"
+// mode: negative
+// expect-error@+2: EUnclosedCharLit "unclosed character literal"
+// expect-error@+2: EUnclosedCharLit "unclosed character literal"
 'x
 '
