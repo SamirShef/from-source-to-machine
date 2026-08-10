@@ -1,5 +1,5 @@
-import "fib_impl.pebble";
+import "math"; // import from ./math.pebble
 
 fn main(): int32 {
-    return fib(5);
+    return math.fib(5);
 }
