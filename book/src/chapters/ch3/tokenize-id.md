@@ -21,10 +21,11 @@ var x = 10;
 
 Ключевые слова представляются отдельными `TokenKind`, поэтому для начала дополним список
 токенов. Спецификация Pebble устанавливает следующий список токенов: `bool`, `char`, `int8`, `int16`,
-`int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`, `float32`, `float64`, `true`, `false`, `var`, `const`, `fn`, `return`,
-`if`, `else`, `for`, `break`, `continue`, `struct`, `nil`, `import`, `extern`. Важно подметить, что
-`true`/`false` являются **ключевыми словами и литералами одновременно**. В коде Pebble `true`/`false`
-хранятся как `BoolLit` (булевый литерал), но при этом обрабатываются лексером как ключевое слово.
+`int32`, `int64`, `uint8`, `uint16`, `uint32`, `uint64`, `float32`, `float64`, `string`, `true`, `false`,
+`var`, `const`, `fn`, `return`, `if`, `else`, `for`, `break`, `continue`, `struct`, `nil`, `import`,
+`extern`. Важно подметить, что `true`/`false` являются **ключевыми словами и литералами одновременно**.
+В коде Pebble `true`/`false` хранятся как `BoolLit` (булевый литерал), но при этом обрабатываются лексером
+как ключевое слово.
 
 ```cpp
 // include/pebble/lexer/token_kind.h
@@ -49,6 +50,7 @@ enum class TokenKind : std::uint8_t {
     Uint64,  // Ключевое слово `uint64`
     Float32, // Ключевое слово `float32`
     Float64, // Ключевое слово `float64`
+    String,  // Ключевое слово `string`
 
     Var,      // Ключевое слово `var`
     Const,    // Ключевое слово `const`
@@ -213,6 +215,7 @@ static inline const std::unordered_map<std::string_view, TokenKind> KEYWORDS{
     keyword ("uint64", Uint64),
     keyword ("float32", Float32),
     keyword ("float64", Float64),
+    keyword ("string", String),
     keyword ("fn", Fn),
     keyword ("return", Ret),
     keyword ("if", If),
