@@ -1,4 +1,4 @@
-fb fib(n: int32): int32 {
+pub fb fib(n: int32): int32 {
     if n <= 0 {
         return 0;
     }
