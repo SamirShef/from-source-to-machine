@@ -19,6 +19,7 @@ enum class TokenKind : std::uint8_t {
     Uint64,  // type `uint64`
     Float32, // type `float32`
     Float64, // type `float64`
+    String,  // type `string`
 
     Var,      // keyword `var`
     Const,    // keyword `const`
@@ -101,6 +102,7 @@ TokenKindToString (TokenKind kind) {
         variant (Uint64);
         variant (Float32);
         variant (Float64);
+        variant (String);
         variant (Var);
         variant (Const);
         variant (Fn);
