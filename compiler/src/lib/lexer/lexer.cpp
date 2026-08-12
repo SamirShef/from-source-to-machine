@@ -163,7 +163,8 @@ Lexer::tokenizePunct () {
         }                                                                                \
         break;
 
-    switch (advance ()) {
+    char ch = advance ();
+    switch (ch) {
         single (';', Semi);
         single (',', Comma);
         single ('.', Dot);
@@ -191,6 +192,12 @@ Lexer::tokenizePunct () {
         triple ('|', '=', OrEq, '|', PipePipe, Pipe);
 
     default:
+        _diag
+            .Report (
+                diagnostic::DiagCode::EInvalidChar,
+                std::string ("unknown character '") + ch + "'",
+                diagnostic::DiagSeverity::Error)
+            .AddAnnotation (span (start, _pos));
         break;
     }
 

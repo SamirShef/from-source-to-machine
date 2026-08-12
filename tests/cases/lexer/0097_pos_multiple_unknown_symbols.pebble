@@ -1,4 +1,6 @@
-// mode: positive
-// expect-token@+2: Unknown "@"
-// expect-token@+1: Unknown "$"
+// mode: negative
+// expect-token@+4: Unknown "@"
+// expect-token@+3: Unknown "$"
+// expect-error@+2: EInvalidChar "unknown character '@'"
+// expect-error@+1: EInvalidChar "unknown character '$'"
 @$

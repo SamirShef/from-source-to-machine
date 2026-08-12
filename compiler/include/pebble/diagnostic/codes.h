@@ -16,6 +16,7 @@ enum class DiagCode : std::uint8_t {
     EIntSuffixForFloat,
     EInvalidNumSuffix,
     EInvalidEscapeSequence,
+    EInvalidChar,
 
     // warnings
     WUnusedVar,
@@ -44,6 +45,7 @@ DiagCodeToString (DiagCode code) {
         variant (EIntSuffixForFloat);
         variant (EInvalidNumSuffix);
         variant (EInvalidEscapeSequence);
+        variant (EInvalidChar);
         variant (WUnusedVar);
         variant (WLossPrecision);
     }

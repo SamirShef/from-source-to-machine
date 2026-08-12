@@ -1,3 +1,4 @@
-// mode: positive
-// expect-token@+1: Unknown "~"
+// mode: negative
+// expect-token@+2: Unknown "~"
+// expect-error@+1: EInvalidChar "unknown character '~'"
 ~
