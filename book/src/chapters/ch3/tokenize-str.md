@@ -37,43 +37,10 @@ $
 $namespace pebble {
 $
 enum class TokenKind : std::uint8_t {
-    Id, // Идентификатор
-
-    Bool,    // Ключевое слово `bool`
-    Char,    // Ключевое слово `char`
-    Int8,    // Ключевое слово `int8`
-    Int16,   // Ключевое слово `int16`
-    Int32,   // Ключевое слово `int32`
-    Int64,   // Ключевое слово `int64`
-    Uint8,   // Ключевое слово `uint8`
-    Uint16,  // Ключевое слово `uint16`
-    Uint32,  // Ключевое слово `uint32`
-    Uint64,  // Ключевое слово `uint64`
-    Float32, // Ключевое слово `float32`
-    Float64, // Ключевое слово `float64`
-    String,  // Ключевое слово `string`
-
-    Var,      // Ключевое слово `var`
-    Const,    // Ключевое слово `const`
-    Fn,       // Ключевое слово `fn`
-    Ret,      // Ключевое слово `return`
-    If,       // Ключевое слово `if`
-    Else,     // Ключевое слово `else`
-    For,      // Ключевое слово `for`
-    Break,    // Ключевое слово `break`
-    Continue, // Ключевое слово `continue`
-    Struct,   // Ключевое слово `struct`
-    Nil,      // Ключевое слово `nil`
-    Import,   // Ключевое слово `import`
-    Extern,   // Ключевое слово `extern`
-
-    BoolLit, // Булевый литерал (true/false)
+    // ...
     NumLit,  // Числовой литерал
     StrLit,  // Строковый литерал
-
-    Unknown,
-    Eof
-    // Остальные типы токенов будем добавлять по мере расширения грамматики
+    // ...
 };
 $
 $}
@@ -91,55 +58,13 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
-private:
-    Token
-    tokenizeIdOrKeyword ();
-
-    Token
-    tokenizeNumLit ();
-
+    // ...
     void
     skipNumSuffix ();
 
     Token
     tokenizeStrLit ();
-
-    void
-    skipComment ();
-
-    void
-    skipMultilineComment ();
-
-    void
-    skipSingleComment ();
-
-    void
-    skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
-
-    constexpr bool
-    isAtEnd () {
-        return _pos >= _source.size ();
-    }
+    // ...
 };
 $
 $}
@@ -150,29 +75,13 @@ $}
 
 Token
 Lexer::NextToken () {
-    if (isAtEnd ()) {
-        return tok2 (Eof, "", span (_pos, _pos));
-    }
-    if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
-        skipComment ();
-        return NextToken ();
-    }
-    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
-        skipSpaces ();
-        return NextToken ();
-    }
-
-    if (std::isalpha (static_cast<unsigned char> (peek ())) != 0 || peek () == '_') {
-        return tokenizeIdOrKeyword ();
-    }
-    if (std::isdigit (static_cast<unsigned char> (peek ())) != 0
-        || peek () == '.' && std::isdigit (static_cast<unsigned char> (peek (1))) != 0) {
-        return tokenizeNumLit ();
-    }
+    // ...
     if (peek () == '\"') {
         return tokenizeStrLit ();
     }
 }
+
+// ...
 
 Token
 Lexer::tokenizeStrLit () {
@@ -236,26 +145,17 @@ dear reader!"
 
 Нужно сделать так, чтобы токенизация строки останавливалась, если встретится символ переноса строки.
 
-```cpp
+```diff
+// src/lib/lexer/lexer.cpp
+
 Token
 Lexer::tokenizeStrLit () {
-    auto start = _pos;
-    advance (); // Пропускаем "
-    while (!isAtEnd () && peek () != '\"' && peek () != '\n' && peek () != '\r') {
+    // ...
+-   while (!isAtEnd () && peek () != '\"') {
++   while (!isAtEnd () && peek () != '\"' && peek () != '\n' && peek () != '\r') {
         advance ();
     }
-    auto tokSpan = span (start, _pos);
-    if (isAtEnd () || peek () == '\n' || peek () == '\r') {
-        _diag
-            .Report (
-                diagnostic::DiagCode::EUnclosedStrLit,
-                "unclosed string literal",
-                diagnostic::DiagSeverity::Error)
-            .AddAnnotation (tokSpan);
-    } else {
-        advance (); // Пропускаем "
-    }
-    return tok2 (StrLit, std::string_view (&_source[start], _pos - start), tokSpan);
+    // ...
 }
 ```
 
@@ -313,86 +213,34 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
-private:
-    Token
-    tokenizeIdOrKeyword ();
-
-    Token
-    tokenizeNumLit ();
-
-    void
-    skipNumSuffix ();
-
+    // ...
     Token
     tokenizeStrLit ();
 
     void
     skipEscapeSequence ();
-
-    void
-    skipComment ();
-
-    void
-    skipMultilineComment ();
-
-    void
-    skipSingleComment ();
-
-    void
-    skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
-
-    constexpr bool
-    isAtEnd () {
-        return _pos >= _source.size ();
-    }
+    // ...
 };
 $
 $}
 ```
 
-```cpp
+```diff
 // src/lib/lexer/lexer.cpp
 
 Token
 Lexer::tokenizeStrLit () {
-    auto start = _pos;
-    advance (); // Пропускаем "
+    // ...
     while (!isAtEnd () && peek () != '\"' && peek () != '\n' && peek () != '\r') {
-        skipEscapeSequence ();
+-       advance ();
++       skipEscapeSequence ();
     }
-    auto tokSpan = span (start, _pos);
-    if (isAtEnd () || peek () == '\n' || peek () == '\r') {
-        _diag
-            .Report (
-                diagnostic::DiagCode::EUnclosedStrLit,
-                "unclosed string literal",
-                diagnostic::DiagSeverity::Error)
-            .AddAnnotation (tokSpan);
-    } else {
-        advance (); // Пропускаем "
-    }
-    return tok2 (StrLit, std::string_view (&_source[start], _pos - start), tokSpan);
+    // ...
 }
+```
+
+```cpp
+// src/lib/lexer/lexer.cpp
 
 void
 Lexer::skipEscapeSequence () {
@@ -462,57 +310,7 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
-private:
-    Token
-    tokenizeIdOrKeyword ();
-
-    Token
-    tokenizeNumLit ();
-
-    void
-    skipNumSuffix ();
-
-    Token
-    tokenizeStrLit ();
-
-    Token
-    tokenizeOp ();
-
-    void
-    skipEscapeSequence ();
-
-    void
-    skipComment ();
-
-    void
-    skipMultilineComment ();
-
-    void
-    skipSingleComment ();
-
-    void
-    skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
-
+    // ...
     constexpr bool
     isAtEnd () {
         return _pos >= _source.size ();
@@ -520,7 +318,9 @@ private:
 
     static constexpr bool
     isHexDigit (char c) noexcept {
-        return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+        return (c >= '0' && c <= '9')
+            || (c >= 'a' && c <= 'f')
+            || (c >= 'A' && c <= 'F');
     }
 
     static constexpr bool
@@ -607,60 +407,28 @@ Lexer::checkAndConsumeOctalDigits (int digitCount) {
 
 Теперь реализация `skipEscapeSequence` меняется до:
 
-```cpp
+```diff
 // src/lib/lexer/lexer.cpp
 
 void
 Lexer::skipEscapeSequence () {
-    auto start = _pos;
-    auto c     = advance ();
+    // ...
     if (c == '\\') {
-        // Проверяем, встретится ли внутри последовательности перевод на новую строку
-        if (isAtEnd () || peek () == '\n' || peek () == '\r') {
-            _diag
-                .Report (
-                    diagnostic::DiagCode::EInvalidEscapeSequence,
-                    "unfinished escape sequence",
-                    diagnostic::DiagSeverity::Error)
-                .AddAnnotation (
-                    span (start, _pos),
-                    "expected escape character before newline");
-            return;
-        }
-
+        // ...
         switch (advance ()) {
-        case 'n':
-        case 'r':
-        case 't':
-        case '\\':
-        case '\'':
-        case '\"':
-        case '0':
-        case 'b':
-        case 'a':
-        case 'f':
-        case 'v':
-            break;
+        // ...
         case 'x':
-            checkAndConsumeHexDigits (2);
-            break;
++           checkAndConsumeHexDigits (2);
++           break;
         case 'u':
-            checkAndConsumeUnicodeDigits (4);
-            break;
++           checkAndConsumeUnicodeDigits (4);
++           break;
         case 'o':
-            checkAndConsumeOctalDigits (3);
+-           // TODO: Реализуем чуть позже
++           checkAndConsumeOctalDigits (3);
             break;
-        default:
-            // Неизвестная последовательность
-            _diag
-                .Report (
-                    diagnostic::DiagCode::EInvalidEscapeSequence,
-                    std::string ("invalid escape sequence '\\") + peek (-1) + "'",
-                    diagnostic::DiagSeverity::Error)
-                .AddAnnotation (span (start, _pos), "unknown escape sequence");
-            break;
+        // ...
         }
     }
 }
-
 ```
