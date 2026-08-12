@@ -237,6 +237,6 @@ main (int argc, char **argv) {
     }
 
     diag.Render ();
-    return static_cast<int> (!diag.HasErrors ());
+    return static_cast<int> (diag.HasErrors ());
 }
 ```
