@@ -10,12 +10,8 @@
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
 private:
@@ -23,8 +19,6 @@ private:
     skipSpaces ();
     // ...
 };
-$
-$}
 ```
 
 Метод `skipSpaces` будет пропускать любые пробельные символы в кодировке ASCII.
@@ -77,12 +71,8 @@ Lexer::NextToken () {
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
 private:
@@ -99,8 +89,6 @@ private:
     skipSpaces ();
     // ...
 };
-$
-$}
 ```
 
 `skipComment` является мостом между `skipSingleComment` и `skipMultilineComment`
@@ -207,12 +195,8 @@ Lexer::NextToken () {
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
     char
@@ -223,8 +207,6 @@ class Lexer {
         return _pos >= _source.size ();
     }
 };
-$
-$}
 ```
 
 ```diff

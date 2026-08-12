@@ -33,13 +33,13 @@ fn main(): int32 {
 ```cpp
 // include/pebble/lexer/token.h
 
-$#pragma once
-$#include "pebble/diagnostic/span.h"
-$#include "pebble/lexer/token_kind.h"
-$#include <string_view>
-$
-$namespace pebble {
-$
+#pragma once
+#include "pebble/diagnostic/span.h"
+#include "pebble/lexer/token_kind.h"
+#include <string_view>
+
+namespace pebble {
+
 struct Token {
     TokenKind        Kind;
     std::string_view Val;
@@ -48,8 +48,8 @@ struct Token {
     Token (TokenKind kind, std::string_view val, diagnostic::Span span)
         : Kind (kind), Val (val), Span (span) {}
 };
-$
-$}
+
+}
 ```
 
 Значение токена будет храниться как `std::string_view`, вместо обычной `std::string`. Токен, как мы помним,
@@ -61,11 +61,11 @@ $}
 ```cpp
 // include/pebble/lexer/token_kind.h
 
-$#pragma once
-$#include <cstdint>
-$
-$namespace pebble {
-$
+#pragma once
+#include <cstdint>
+
+namespace pebble {
+
 enum class TokenKind : std::uint8_t {
     Id, // Идентификатор
 
@@ -73,8 +73,8 @@ enum class TokenKind : std::uint8_t {
     Eof
     // Остальные типы токенов будем добавлять по мере расширения грамматики
 };
-$
-$}
+
+}
 ```
 
 Так как лексер выдает токены по одному вместо вектора, синтаксическому анализатору нужно знать когда
@@ -105,12 +105,12 @@ $}
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+#pragma once
+#include "pebble/diagnostic/engine.h"
+#include "pebble/lexer/token.h"
+
+namespace pebble {
+
 class Lexer {
     diagnostic::DiagnosticEngine &_diag;
     std::uint32_t                 _fileId;
@@ -133,8 +133,8 @@ private:
     char
     peek (int relPos = 0) const;
 };
-$
-$}
+
+}
 ```
 
 Лексер должен уметь читать символ из исходников. Иногда нужно прочитать следующий или предыдущий символ.
@@ -149,14 +149,14 @@ $}
 ```cpp
 // src/lib/lexer/lexer.cpp
 
-$#include "pebble/lexer/lexer.h"
-$#include "pebble/basic/pos.h"
-$#include "pebble/diagnostic/codes.h"
-$#include "pebble/lexer/keywords.h"
-$#include <cctype>
-$
-$namespace pebble {
-$
+#include "pebble/lexer/lexer.h"
+#include "pebble/basic/pos.h"
+#include "pebble/diagnostic/codes.h"
+#include "pebble/lexer/keywords.h"
+#include <cctype>
+
+namespace pebble {
+
 #define pos(start) pebble::basic::Pos ((start), (_fileId))
 #define span(start, end) pebble::diagnostic::Span (pos ((start)), pos ((end)))
 #define tok(kind, val, span) pebble::Token ((kind), (val), (span))
@@ -188,8 +188,8 @@ Lexer::peek (int relPos) const {
 #undef tok
 #undef span
 #undef pos
-$
-$}
+
+}
 ```
 
 > Макросы `pos`, `tok`, `tok2` и `span` --- чистый сахар. `pos` генерирует `basic::Pos` из двух чисел,
@@ -205,18 +205,18 @@ $}
 ```cpp
 // src/main.cpp
 
-$#include "pebble/basic/loc.h"
-$#include "pebble/basic/pos.h"
-$#include "pebble/basic/source_mgr.h"
-$#include "pebble/diagnostic/colors.h"
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/diagnostic/span.h"
-$#include "pebble/lexer/lexer.h"
-$#include <cstring>
-$#include <format>
-$#include <fstream>
-$#include <sstream>
-$#include <vector>
+#include "pebble/basic/loc.h"
+#include "pebble/basic/pos.h"
+#include "pebble/basic/source_mgr.h"
+#include "pebble/diagnostic/colors.h"
+#include "pebble/diagnostic/engine.h"
+#include "pebble/diagnostic/span.h"
+#include "pebble/lexer/lexer.h"
+#include <cstring>
+#include <format>
+#include <fstream>
+#include <sstream>
+#include <vector>
 
 using namespace pebble;
 

@@ -30,11 +30,8 @@ var x = 10;
 ```cpp
 // include/pebble/lexer/token_kind.h
 
-$#pragma once
-$#include <cstdint>
-$
-$namespace pebble {
-$
+// ...
+
 enum class TokenKind : std::uint8_t {
     Id, // Идентификатор
 
@@ -70,8 +67,6 @@ enum class TokenKind : std::uint8_t {
     NumLit,   // Числовой литерал
     // ...
 };
-$
-$}
 ```
 
 ## Токенизация
@@ -81,12 +76,8 @@ $}
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
 private:
@@ -97,12 +88,12 @@ private:
     tokenizeNumLit ();
     // ...
 };
-$
-$}
 ```
 
 ```cpp
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 Token
 Lexer::NextToken () {
@@ -135,13 +126,13 @@ Lexer::tokenizeIdOrKeyword () {
 ```cpp
 // include/pebble/lexer/keywords.h
 
-$#pragma once
-$#include "pebble/lexer/token_kind.h"
-$#include <string_view>
-$#include <unordered_map>
-$
-$namespace pebble {
-$
+#pragma once
+#include "pebble/lexer/token_kind.h"
+#include <string_view>
+#include <unordered_map>
+
+namespace pebble {
+
 #define keyword(val, kind) { (val), pebble::TokenKind::kind }
 
 static inline const std::unordered_map<std::string_view, TokenKind> KEYWORDS{
@@ -176,8 +167,8 @@ static inline const std::unordered_map<std::string_view, TokenKind> KEYWORDS{
 };
 
 #undef keyword
-$
-$}
+
+}
 ```
 
 Макрос `keyword` --- сахар для добавления токена в хеш-таблицу.
@@ -189,6 +180,7 @@ $}
 ```diff
 // src/lib/lexer/lexer.cpp
 
+// ...
 +#include "pebble/lexer/keywords.h"
 
 Token

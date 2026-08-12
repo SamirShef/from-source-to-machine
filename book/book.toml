@@ -6,7 +6,3 @@ language = "ru"
 
 [output.html]
 additional-js = ["theme/pebble-highlight.js"]
-
-[output.html.code.hidelines]
-cpp = "$"
-bash = "@"

@@ -31,19 +31,14 @@ world!"
 ```cpp
 // include/pebble/lexer/token_kind.h
 
-$#pragma once
-$#include <cstdint>
-$
-$namespace pebble {
-$
+// ...
+
 enum class TokenKind : std::uint8_t {
     // ...
     NumLit,  // Числовой литерал
     StrLit,  // Строковый литерал
     // ...
 };
-$
-$}
 ```
 
 ## Токенизация
@@ -51,12 +46,8 @@ $}
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
     void
@@ -66,12 +57,12 @@ class Lexer {
     tokenizeStrLit ();
     // ...
 };
-$
-$}
 ```
 
 ```cpp
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 Token
 Lexer::NextToken () {
@@ -148,6 +139,8 @@ dear reader!"
 ```diff
 // src/lib/lexer/lexer.cpp
 
+// ...
+
 Token
 Lexer::tokenizeStrLit () {
     // ...
@@ -206,12 +199,8 @@ error[E0002]: unclosed string literal
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
     Token
@@ -221,12 +210,12 @@ class Lexer {
     skipEscapeSequence ();
     // ...
 };
-$
-$}
 ```
 
 ```diff
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 Token
 Lexer::tokenizeStrLit () {
@@ -241,6 +230,8 @@ Lexer::tokenizeStrLit () {
 
 ```cpp
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 void
 Lexer::skipEscapeSequence () {
@@ -303,12 +294,8 @@ Lexer::skipEscapeSequence () {
 ```cpp
 // include/pebble/lexer/lexer.
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
     // ...
     constexpr bool
@@ -337,12 +324,12 @@ class Lexer {
     void
     checkAndConsumeOctalDigits (int digitCount);
 };
-$
-$}
 ```
 
 ```cpp
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 void
 Lexer::checkAndConsumeHexDigits (int digitCount) {
@@ -409,6 +396,8 @@ Lexer::checkAndConsumeOctalDigits (int digitCount) {
 
 ```diff
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 void
 Lexer::skipEscapeSequence () {

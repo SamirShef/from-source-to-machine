@@ -37,13 +37,13 @@
 ```cpp
 // include/pebble/diagnostic/annotation.h
 
-$#pragma once
-$#include "pebble/diagnostic/span.h"
-$#include <string>
-$#include <utility>
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include "pebble/diagnostic/span.h"
+#include <string>
+#include <utility>
+
+namespace pebble::diagnostic {
+
 struct Annotation {
     struct Span Span;
     std::string Label;
@@ -54,8 +54,8 @@ struct Annotation {
 
     auto operator<=> (const Annotation &) const = default;
 };
-$
-$}
+
+}
 ```
 
 Посмотрите, как это разделение преображает восприятие повторного объявления переменной:
@@ -89,31 +89,31 @@ error[E0012]: variable 'x' is already defined
 ```cpp
 // include/pebble/diagnostic/help.h
 
-$#pragma once
-$#include <string>
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include <string>
+
+namespace pebble::diagnostic {
+
 struct Help {
     std::string Msg;
 };
-$
-$}
+
+}
 ```
 
 ```cpp
 // include/pebble/diagnostic/note.h
 
-$#pragma once
-$#include <string>
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include <string>
+
+namespace pebble::diagnostic {
+
 struct Note {
     std::string Msg;
 };
-$
-$}
+
+}
 ```
 
 Каждой диагностике также присваивается строго определённый код из перечисления `DiagCode`:
@@ -121,11 +121,11 @@ $}
 ```cpp
 // include/pebble/diagnostic/codes.h
 
-$#pragma once
-$#include <cstdint>
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include <cstdint>
+
+namespace pebble::diagnostic {
+
 enum class DiagSeverity : std::uint8_t { Warning, Error, Note };
 
 enum class DiagCode : std::uint8_t {
@@ -149,8 +149,8 @@ constexpr inline DiagCode ERR_CODE_LAST
 
 constexpr inline DiagCode WARN_CODE_START = DiagCode::WUnusedVar;
 constexpr inline DiagCode WARN_CODE_LAST  = DiagCode::WLossPrecision;
-$
-$}
+
+}
 ```
 
 ## Конструирование через Fluent API: `DiagnosticBuilder`
@@ -162,18 +162,18 @@ $}
 ```cpp
 // include/pebble/diagnostic/codes.h
 
-$#pragma once
-$#include "pebble/diagnostic/annotation.h"
-$#include "pebble/diagnostic/codes.h"
-$#include "pebble/diagnostic/note.h"
-$#include "pebble/diagnostic/help.h"
-$#include "pebble/diagnostic/span.h"
-$#include <string>
-$#include <utility>
-$#include <vector>
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include "pebble/diagnostic/annotation.h"
+#include "pebble/diagnostic/codes.h"
+#include "pebble/diagnostic/note.h"
+#include "pebble/diagnostic/help.h"
+#include "pebble/diagnostic/span.h"
+#include <string>
+#include <utility>
+#include <vector>
+
+namespace pebble::diagnostic {
+
 class DiagnosticBuilder {
     DiagCode                _code;
     std::string             _msg;
@@ -245,8 +245,8 @@ public:
         return _notes;
     }
 };
-$
-$}
+
+}
 ```
 
 ### Как это выглядит на практике?

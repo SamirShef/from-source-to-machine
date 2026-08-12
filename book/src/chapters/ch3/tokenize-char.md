@@ -8,6 +8,8 @@
 ```cpp
 // include/pebble/lexer/token_kind.h
 
+// ...
+
 enum class TokenKind : std::uint8_t {
     // ...
     BoolLit, // Булевый литерал (true/false)
@@ -18,6 +20,8 @@ enum class TokenKind : std::uint8_t {
 
 ```cpp
 // include/pebble/lexer/lexer.h
+
+// ...
 
 class Lexer {
     // ...

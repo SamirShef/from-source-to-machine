@@ -14,13 +14,13 @@
 ```cpp
 // src/main.cpp
 
-$#include "pebble/basic/source_mgr.h"
-$#include "pebble/diagnostic/engine.h"
-$
-$using namespace pebble;
-$using namespace pebble::basic;
-$using namespace pebble::diagnostic;
-$
+#include "pebble/basic/source_mgr.h"
+#include "pebble/diagnostic/engine.h"
+
+using namespace pebble;
+using namespace pebble::basic;
+using namespace pebble::diagnostic;
+
 void
 DemoUnclosedString (SourceMgr &srcMgr, DiagnosticEngine &engine) {
     uint32_t fileId = srcMgr.AddFile (
@@ -40,16 +40,16 @@ DemoUnclosedString (SourceMgr &srcMgr, DiagnosticEngine &engine) {
             DiagSeverity::Error)
         .AddAnnotation (Span{ start, end }, "string literal starts here", true);
 }
-$
-$int
-$main () {
-$    EnableVirtualTerminalProcessing ();
-$    basic::SourceMgr             mgr;
-$    diagnostic::DiagnosticEngine diag (mgr);
-$    DemoUnclosedString (mgr, diag);
-$    diag.Render ();
-$    return 0;
-$}
+
+int
+main () {
+    EnableVirtualTerminalProcessing ();
+    basic::SourceMgr             mgr;
+    diagnostic::DiagnosticEngine diag (mgr);
+    DemoUnclosedString (mgr, diag);
+    diag.Render ();
+    return 0;
+}
 ```
 
 Вывод в консоли:

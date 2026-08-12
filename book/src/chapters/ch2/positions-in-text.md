@@ -16,19 +16,19 @@
 ```cpp
 // include/pebble/basic/loc.h
 
-$#pragma once
-$#include <cstdint>
-$
-$namespace pebble::basic {
-$
+#pragma once
+#include <cstdint>
+
+namespace pebble::basic {
+
 struct Loc {
     std::uint32_t Line; // Начинается с 1
     std::uint32_t Col;  // Начинается с 1
 
     Loc (std::uint32_t line, std::uint32_t col) : Line (line), Col (col) {}
 };
-$
-$}
+
+}
 ```
 
 Однако хранить строки и столбцы для каждого токена и узла AST --- крайне неэффективно. При любом изменении
@@ -40,12 +40,12 @@ $}
 ```cpp
 // include/pebble/basic/pos.h
 
-$#pragma once
-$#include <compare>
-$#include <cstdint>
-$
-$namespace pebble::basic {
-$
+#pragma once
+#include <compare>
+#include <cstdint>
+
+namespace pebble::basic {
+
 struct Pos {
     std::uint32_t Start; // Байтовое смещение от начала файла
     std::uint32_t FileId;
@@ -54,8 +54,8 @@ struct Pos {
 
     auto operator<=> (const Pos &) const = default;
 };
-$
-$}
+
+}
 ```
 
 > **Обратите внимание:** `Start` хранит именно *байтовое смещение* от начала файла (начинающееся с 0), а
@@ -79,11 +79,11 @@ $}
 ```cpp
 // include/pebble/diagnostic/span.h
 
-$#pragma once
-$#include "pebble/basic/pos.h"
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include "pebble/basic/pos.h"
+
+namespace pebble::diagnostic {
+
 struct Span {
     basic::Pos Start;
     basic::Pos End;
@@ -92,8 +92,8 @@ struct Span {
 
     auto operator<=> (const Span &) const = default;
 };
-$
-$}
+
+}
 ```
 
 Диапазон `Span` представляет собой полуинтервал `[Start, End)`, где `Start` указывает на первый байт

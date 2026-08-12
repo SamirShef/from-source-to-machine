@@ -44,25 +44,25 @@
 ```cpp
 // include/pebble/basic/source_mgr.h
 
-$#pragma once
-$#include "pebble/basic/loc.h"
-$#include "pebble/basic/pos.h"
-$#include <algorithm>
-$#include <cstdint>
-$#include <iterator>
-$#include <string>
-$#include <vector>
-$
-$namespace pebble::basic {
-$
+#pragma once
+#include "pebble/basic/loc.h"
+#include "pebble/basic/pos.h"
+#include <algorithm>
+#include <cstdint>
+#include <iterator>
+#include <string>
+#include <vector>
+
+namespace pebble::basic {
+
 struct File {
     std::uint32_t              Id;         // Уникальный идентификатор файла
     std::string                Name;       // Имя файла или путь к нему
     std::string                Content;    // Полный текст файла
     std::vector<std::uint32_t> LineStarts; // Байтовые смещения начал всех строк
 };
-$
-$}
+
+}
 ```
 
 Теперь напишем сам `SourceMgr`, умеющий регистрировать файлы и вычислять координаты:
@@ -70,18 +70,18 @@ $}
 ```cpp
 // include/pebble/basic/source_mgr.h
 
-$#pragma once
-$#include "pebble/basic/loc.h"
-$#include "pebble/basic/pos.h"
-$#include <algorithm>
-$#include <cstdint>
-$#include <iterator>
-$#include <string>
-$#include <string_view>
-$#include <vector>
-$
-$namespace pebble::basic {
-$
+#pragma once
+#include "pebble/basic/loc.h"
+#include "pebble/basic/pos.h"
+#include <algorithm>
+#include <cstdint>
+#include <iterator>
+#include <string>
+#include <string_view>
+#include <vector>
+
+namespace pebble::basic {
+
 class SourceMgr {
     std::vector<File> _files;
 
@@ -141,8 +141,8 @@ public:
         return { file.Content.data () + start, end - start };
     }
 };
-$
-$}
+
+}
 ```
 
 ## Как работают ключевые методы?

@@ -33,19 +33,14 @@ var z: float32 = 123.45; // 123.45 выведется как тип float32
 ```cpp
 // include/pebble/lexer/token_kind.h
 
-$#pragma once
-$#include <cstdint>
-$
-$namespace pebble {
-$
+// ...
+
 enum class TokenKind : std::uint8_t {
     Id, // Идентификатор
 
     NumLit,   // Числовой литерал
     // ...
 };
-$
-$}
 ```
 
 ## Токенизация
@@ -55,12 +50,8 @@ $}
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
 private:
     Token
@@ -70,8 +61,6 @@ private:
     skipComment ();
     // ...
 };
-$
-$}
 ```
 
 В `NextToken` нужно определить, является ли текущий символ (`peek (0)`) началом числового литерала.
@@ -83,6 +72,8 @@ $}
 
 ```cpp
 // src/lib/lexer/lexer.cpp
+
+// ...
 
 Token
 Lexer::NextToken () {
@@ -114,12 +105,8 @@ Lexer::NextToken () {
 ```cpp
 // include/pebble/lexer/lexer.h
 
-$#pragma once
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/lexer/token.h"
-$
-$namespace pebble {
-$
+// ...
+
 class Lexer {
 private:
     Token
@@ -129,8 +116,6 @@ private:
     skipNumSuffix ();
     // ...
 };
-$
-$}
 ```
 
 Важно понимать, что для лексера суффикс числа --- это **любая последовательность букв и цифр сразу после

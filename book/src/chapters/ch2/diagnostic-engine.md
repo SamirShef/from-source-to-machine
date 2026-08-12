@@ -21,10 +21,10 @@
 ```cpp
 // include/pebble/diagnostic/colors.h
 
-$#pragma once
-$
-$namespace pebble {
-$
+#pragma once
+
+namespace pebble {
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -55,8 +55,8 @@ constexpr Color BLUE   = "\033[34m";
 constexpr Color CYAN   = "\033[36m";
 
 }
-$
-$}
+
+}
 ```
 
 Каждая константа — это служебная последовательность байт. Например, `\033[31m` переключает цвет текста
@@ -120,18 +120,18 @@ DigitCount (std::uint32_t line) {
 ```cpp
 // include/pebble/diagnostic/engine.h
 
-$#pragma once
-$#include "pebble/basic/source_mgr.h"
-$#include "pebble/diagnostic/annotation.h"
-$#include "pebble/diagnostic/builder.h"
-$#include "pebble/diagnostic/colors.h"
-$#include <algorithm>
-$#include <cmath>
-$#include <iostream>
-$#include <vector>
-$
-$namespace pebble::diagnostic {
-$
+#pragma once
+#include "pebble/basic/source_mgr.h"
+#include "pebble/diagnostic/annotation.h"
+#include "pebble/diagnostic/builder.h"
+#include "pebble/diagnostic/colors.h"
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <vector>
+
+namespace pebble::diagnostic {
+
 inline int
 DigitCount (std::uint32_t line) {
     if (line == 0) {
@@ -217,8 +217,8 @@ private:
     static void
     printNote (const Note &note, std::uint32_t maxLineWidth);
 };
-$
-$}
+
+}
 ```
 
 ## Реализация форматирования и рендеринга
@@ -229,13 +229,13 @@ $}
 ```cpp
 // src/lib/diagnostic/engine.cpp
 
-$#include "pebble/diagnostic/engine.h"
-$#include "pebble/diagnostic/codes.h"
-$#include "pebble/diagnostic/colors.h"
-$#include <format>
-$
-$namespace pebble::diagnostic {
-$
+#include "pebble/diagnostic/engine.h"
+#include "pebble/diagnostic/codes.h"
+#include "pebble/diagnostic/colors.h"
+#include <format>
+
+namespace pebble::diagnostic {
+
 #define variant(kind, val)                                                               \
     case DiagSeverity::kind:                                                             \
         return val;
@@ -364,8 +364,8 @@ DiagnosticEngine::printNote (const Note &note, std::uint32_t maxLineWidth) {
     std::cerr << color::RESET << std::string (maxLineWidth, ' ') << " = ";
     std::cerr << color::CYAN << "note: " << color::RESET << note.Msg << '\n';
 }
-$
-$};
+
+};
 ```
 
 ### Как работают внутренние алгоритмы?
