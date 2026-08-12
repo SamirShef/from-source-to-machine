@@ -36,7 +36,7 @@ private:
     tokenizeCharLit ();
 
     Token
-    tokenizeOp ();
+    tokenizePunct ();
 
     void
     skipEscapeSequence ();

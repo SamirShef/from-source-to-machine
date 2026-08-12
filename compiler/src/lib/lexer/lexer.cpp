@@ -38,7 +38,7 @@ Lexer::NextToken () {
     if (peek () == '\'') {
         return tokenizeCharLit ();
     }
-    return tokenizeOp ();
+    return tokenizePunct ();
 }
 
 Token
@@ -131,7 +131,7 @@ Lexer::tokenizeCharLit () {
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 Token
-Lexer::tokenizeOp () {
+Lexer::tokenizePunct () {
     auto start = _pos;
     auto kind  = TokenKind::Unknown;
 
