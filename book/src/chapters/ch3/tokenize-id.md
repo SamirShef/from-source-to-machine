@@ -68,10 +68,7 @@ enum class TokenKind : std::uint8_t {
 
     BoolLit,  // Булевый литерал (true/false)
     NumLit,   // Числовой литерал
-
-    Unknown,
-    Eof
-    // Остальные типы токенов будем добавлять по мере расширения грамматики
+    // ...
 };
 $
 $}
@@ -91,52 +88,14 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
+    // ...
 private:
     Token
     tokenizeIdOrKeyword ();
 
     Token
     tokenizeNumLit ();
-
-    void
-    skipNumSuffix ();
-
-    void
-    skipComment ();
-
-    void
-    skipMultilineComment ();
-
-    void
-    skipSingleComment ();
-
-    void
-    skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
-
-    constexpr bool
-    isAtEnd () {
-        return _pos >= _source.size ();
-    }
+    // ...
 };
 $
 $}
@@ -147,24 +106,11 @@ $}
 
 Token
 Lexer::NextToken () {
-    if (peek () == '\0') {
-        return tok2 (Eof, "", span (_pos, _pos));
-    }
-    if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
-        skipComment ();
-        return NextToken ();
-    }
-    if (std::isspace (peek ()) != 0) {
-        skipSpaces ();
-        return NextToken ();
-    }
-
+    // ...
     if (std::isalpha (peek ()) != 0 || peek () == '_') {
         return tokenizeIdOrKeyword ();
     }
-    if (std::isdigit (peek ()) != 0 || peek () == '.' && std::isdigit (peek (1)) != 0) {
-        return tokenizeNumLit ();
-    }
+    // ...
 }
 
 // ...
@@ -240,31 +186,14 @@ $}
 проверить, есть ли проанализированная строка в `KEYWORDS`. Если есть, то `tokenizeIdOrKeyword` возвращает
 ключевое слово, в противном случае --- идентификатор.
 
-```cpp
+```diff
 // src/lib/lexer/lexer.cpp
 
-#include "pebble/lexer/keywords.h"
++#include "pebble/lexer/keywords.h"
 
 Token
 Lexer::NextToken () {
-    if (peek () == '\0') {
-        return tok2 (Eof, "", span (_pos, _pos));
-    }
-    if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
-        skipComment ();
-        return NextToken ();
-    }
-    if (std::isspace (peek ()) != 0) {
-        skipSpaces ();
-        return NextToken ();
-    }
-
-    if (std::isalpha (peek ()) != 0 || peek () == '_') {
-        return tokenizeIdOrKeyword ();
-    }
-    if (std::isdigit (peek ()) != 0 || peek () == '.' && std::isdigit (peek (1)) != 0) {
-        return tokenizeNumLit ();
-    }
+    // ...
 }
 
 // ...
@@ -276,12 +205,13 @@ Lexer::tokenizeIdOrKeyword () {
         advance ();
     }
     std::string_view val (&_source[start], _pos - start);
-    auto             kind = TokenKind::Id;
-    // Пытаемся найти val в KEYWORDS
-    if (auto it = KEYWORDS.find (val); it != KEYWORDS.end ()) {
-        // Нашли, значит возвращаем как ключевое слово из KEYWORDS
-        kind = it->second;
-    }
-    return tok (kind, val, span (start, _pos));
+-   return tok (TokenKind::Id, val, span (start, _pos));
++   auto             kind = TokenKind::Id;
++   // Пытаемся найти val в KEYWORDS
++   if (auto it = KEYWORDS.find (val); it != KEYWORDS.end ()) {
++       // Нашли, значит возвращаем как ключевое слово из KEYWORDS
++       kind = it->second;
++   }
++    return tok (kind, val, span (start, _pos));
 }
 ```
