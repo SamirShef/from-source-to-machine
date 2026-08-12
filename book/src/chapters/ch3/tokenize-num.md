@@ -42,10 +42,7 @@ enum class TokenKind : std::uint8_t {
     Id, // Идентификатор
 
     NumLit,   // Числовой литерал
-
-    Unknown,
-    Eof
-    // Остальные типы токенов будем добавлять по мере расширения грамматики
+    // ...
 };
 $
 $}
@@ -65,41 +62,13 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
 private:
     Token
     tokenizeNumLit ();
 
     void
     skipComment ();
-
-    void
-    skipMultilineComment ();
-
-    void
-    skipSingleComment ();
-
-    void
-    skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
+    // ...
 };
 $
 $}
@@ -117,18 +86,7 @@ $}
 
 Token
 Lexer::NextToken () {
-    if (peek () == '\0') {
-        return tok2 (Eof, "", span (_pos, _pos));
-    }
-    if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
-        skipComment ();
-        return NextToken ();
-    }
-    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
-        skipSpaces ();
-        return NextToken ();
-    }
-
+    // ...
         // Десятичная цифра
     if (std::isdigit (static_cast<unsigned char> (peek ())) != 0
         // Или точка, после которой идет десятичная цифра
@@ -151,7 +109,29 @@ Lexer::NextToken () {
 Когда `tokenizeNumLit` закончит съедать символы числа, он обязан проверить символы после него (суффиксы).
 Сами суффиксы **сохраняются в `Val` токена**. Например, число `123.45f32` превратиться в токен
 `Token (NumLit, "123.45f32", Pos (...))`. Не забываем, что `Val` --- точное отражение токена
-в строке.
+в строке. Пусть пропуском суффикса занимается метод `skipNumSuffix`.
+
+```cpp
+// include/pebble/lexer/lexer.h
+
+$#pragma once
+$#include "pebble/diagnostic/engine.h"
+$#include "pebble/lexer/token.h"
+$
+$namespace pebble {
+$
+class Lexer {
+private:
+    Token
+    tokenizeNumLit ();
+
+    void
+    skipNumSuffix ();
+    // ...
+};
+$
+$}
+```
 
 Важно понимать, что для лексера суффикс числа --- это **любая последовательность букв и цифр сразу после
 числа без пробелов**. Текст `123abc` превратится в токен `Token (NumLit, "123abc", Pos (...))`.
@@ -163,11 +143,14 @@ Lexer::NextToken () {
 ```cpp
 // src/lib/lexer/lexer.cpp
 
+// ...
+
 Token
 Lexer::tokenizeNumLit () {
     auto start = _pos;
     bool hasDot{};
-    while (!isAtEnd() && (std::isdigit (static_cast<unsigned char> (peek ())) != 0 || peek () == '.')) {
+    while (!isAtEnd() && (std::isdigit (static_cast<unsigned char> (peek ())) != 0
+        || peek () == '.')) {
         if (peek () == '.') {
             if (!hasDot) {
                 hasDot = true;
@@ -190,6 +173,8 @@ Lexer::skipNumSuffix () {
         advance ();
     }
 }
+
+// ...
 ```
 
 Флаг `hasDot` нужен, чтобы `tokenizeNumLit` запомнил, встречал ли он уже точку. Если встречал, то токенизация
