@@ -17,29 +17,11 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
+    // ...
 private:
     void
     skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
+    // ...
 };
 $
 $}
@@ -67,9 +49,7 @@ Lexer::skipSpaces () {
 
 Token
 Lexer::NextToken () {
-    if (peek () == '\0') {
-        return tok2 (Eof, "", span (_pos, _pos));
-    }
+    // ...
     if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         skipSpaces ();
         return NextToken ();
@@ -104,20 +84,7 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
+    // ...
 private:
     void
     skipComment ();
@@ -130,12 +97,7 @@ private:
 
     void
     skipSpaces ();
-
-    char
-    advance ();
-
-    char
-    peek (int relPos = 0) const;
+    // ...
 };
 $
 $}
@@ -190,17 +152,12 @@ Lexer::skipSingleComment () {
 
 Token
 Lexer::NextToken () {
-    if (peek () == '\0') {
-        return tok2 (Eof, "", span (_pos, _pos));
-    }
+    // ...
     if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
         skipComment ();
         return NextToken ();
     }
-    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
-        skipSpaces ();
-        return NextToken ();
-    }
+    // ...
 }
 ```
 
@@ -257,36 +214,7 @@ $
 $namespace pebble {
 $
 class Lexer {
-    diagnostic::DiagnosticEngine &_diag;
-    std::uint32_t                 _fileId;
-    std::uint32_t                 _pos{};
-    const std::string            &_source;
-
-public:
-    Lexer (diagnostic::DiagnosticEngine &diag, std::uint32_t fileId)
-        : _diag (diag),
-          _fileId (fileId),
-          _source (diag.SourceMgr ().GetFile (fileId).Content) {}
-
-    Token
-    NextToken ();
-
-private:
-    void
-    skipComment ();
-
-    void
-    skipMultilineComment ();
-
-    void
-    skipSingleComment ();
-
-    void
-    skipSpaces ();
-
-    char
-    advance ();
-
+    // ...
     char
     peek (int relPos = 0) const;
 
@@ -299,39 +227,38 @@ $
 $}
 ```
 
-```cpp
+```diff
 // src/lib/lexer/lexer.cpp
 
 Token
 Lexer::NextToken () {
-    if (isAtEnd ()) {
+-   if (peek () == '\0') {
++   if (isAtEnd ()) {
         return tok2 (Eof, "", span (_pos, _pos));
     }
-    if (peek () == '/' && (peek (1) == '/' || peek (1) == '*')) {
-        skipComment ();
-        return NextToken ();
-    }
-    if (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
-        skipSpaces ();
-        return NextToken ();
-    }
+    // ...
 }
+
+// ...
 
 void
 Lexer::skipMultilineComment () {
-    while (!isAtEnd () && (peek (-1) != '/' || peek (-2) != '*')) {
+-   while (peek (-1) != '/' || peek (-2) != '*') {
++   while (!isAtEnd () && (peek (-1) != '/' || peek (-2) != '*')) {
         advance ();
     }
 }
 
 void
 Lexer::skipSingleComment () {
-    while (!isAtEnd() && advance () != '\n') {}
+-   while (advance () != '\n') {}
++   while (!isAtEnd() && advance () != '\n') {}
 }
 
 void
 Lexer::skipSpaces () {
-    while (!isAtEnd () && std::isspace (static_cast<unsigned char> (peek ())) != 0) {
+-   while (std::isspace (static_cast<unsigned char> (peek ())) != 0) {
++   while (!isAtEnd () && std::isspace (static_cast<unsigned char> (peek ())) != 0) {
         advance ();
     }
 }
