@@ -12,8 +12,6 @@ enum class TokenKind : std::uint8_t {
     // ...
     BoolLit, // Булевый литерал (true/false)
     CharLit, // Символьный литерал
-    NumLit,  // Числовой литерал
-    StrLit,  // Строковый литерал
     // ...
 };
 ```
