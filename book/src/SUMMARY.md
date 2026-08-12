@@ -23,5 +23,5 @@
   - [Имена и ключевые слова](./chapters/ch3/tokenize-id.md)
   - [Текст в кавычках](./chapters/ch3/tokenize-str.md)
   - [Одинокие символы](./chapters/ch3/tokenize-char.md)
-  - [Операторы](./chapters/ch3/operators.md)
+  - [Пунктуация](./chapters/ch3/tokenize-punct.md)
   - [Всевидящее око](./chapters/ch3/dumping.md)
