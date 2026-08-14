@@ -1,8 +1,8 @@
 // mode: positive
 // expect-token@+8: Id "a"
-// expect-token@+7: AndEq "&="
+// expect-token@+7: AmpEq "&="
 // expect-token@+6: Id "b"
-// expect-token@+5: OrEq "|="
+// expect-token@+5: PipeEq "|="
 // expect-token@+4: Id "c"
 // expect-token@+3: CarretEq "^="
 // expect-token@+2: Id "d"

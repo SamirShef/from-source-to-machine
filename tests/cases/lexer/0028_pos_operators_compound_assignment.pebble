@@ -4,8 +4,8 @@
 // expect-token@+7: StarEq "*="
 // expect-token@+6: SlashEq "/="
 // expect-token@+5: PercentEq "%="
-// expect-token@+4: AndEq "&="
-// expect-token@+3: OrEq "|="
+// expect-token@+4: AmpEq "&="
+// expect-token@+3: PipeEq "|="
 // expect-token@+2: CarretEq "^="
 // expect-token@+1: Semi ";"
 += -= *= /= %= &= |= ^= ;
