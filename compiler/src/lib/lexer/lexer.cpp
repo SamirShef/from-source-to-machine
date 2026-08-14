@@ -188,8 +188,8 @@ Lexer::tokenizePunct () {
         pair ('<', '=', LtEq, Lt);
         pair ('>', '=', GtEq, Gt);
 
-        triple ('&', '=', AndEq, '&', AmpAmp, Amp);
-        triple ('|', '=', OrEq, '|', PipePipe, Pipe);
+        triple ('&', '=', AmpEq, '&', AmpAmp, Amp);
+        triple ('|', '=', PipeEq, '|', PipePipe, Pipe);
 
     default:
         _diag

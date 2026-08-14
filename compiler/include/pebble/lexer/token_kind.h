@@ -66,8 +66,8 @@ enum class TokenKind : std::uint8_t {
     StarEq,    // `*=`
     SlashEq,   // `/=`
     PercentEq, // `%=`
-    AndEq,     // `&=`
-    OrEq,      // `|=`
+    AmpEq,     // `&=`
+    PipeEq,    // `|=`
     CarretEq,  // `^=`
     Bang,      // `!`
     BangEq,    // `!=`
@@ -146,8 +146,8 @@ TokenKindToString (TokenKind kind) {
         variant (StarEq);
         variant (SlashEq);
         variant (PercentEq);
-        variant (AndEq);
-        variant (OrEq);
+        variant (AmpEq);
+        variant (PipeEq);
         variant (CarretEq);
         variant (Bang);
         variant (BangEq);
