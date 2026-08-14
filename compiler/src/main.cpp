@@ -78,7 +78,7 @@ CompileFile (
     std::cout << "Compilation file " << path << "...\n";
     std::ifstream file (path);
     if (!file.is_open ()) {
-        std::cerr << path << ": Error openning file!\n";
+        std::cerr << path << ": Error opening file!\n";
         return false;
     }
     std::stringstream buffer;
