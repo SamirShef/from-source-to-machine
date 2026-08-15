@@ -56,7 +56,7 @@ PrintOptions () {
         PrintDash (opt->Pref);
         std::cout << opt->Name;
         if (!opt->ValueHint.empty ()) {
-            std::cout << '=' << opt->ValueHint;
+            std::cout << "=<" << opt->ValueHint << '>';
         }
         if (!opt->Desc.empty ()) {
             std::cout << std::string (maxLen - optLen + PADDING, ' ');

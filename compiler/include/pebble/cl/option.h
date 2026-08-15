@@ -82,7 +82,7 @@ public:
         std::string name,
         std::string desc,
         PrefixStyle prefix = PrefixStyle::OneOrTwo,
-        std::string hint   = "<value>")
+        std::string hint   = "value")
         : Option (std::move (name), std::move (desc), prefix, std::move (hint)) {}
 
     const std::string &
