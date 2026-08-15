@@ -2,6 +2,7 @@
 #include "pebble/basic/options.h"
 #include "pebble/basic/pos.h"
 #include "pebble/basic/source_mgr.h"
+#include "pebble/cl/help_info.h"
 #include "pebble/cl/parser.h"
 #include "pebble/diagnostic/colors.h"
 #include "pebble/diagnostic/engine.h"
@@ -22,11 +23,17 @@ CompileFile (
 
 int
 main (int argc, char **argv) {
+    EnableVirtualTerminalProcessing ();
+
     if (!cl::ParseCommandLineOptions (argc, argv)) {
         return 1;
     }
 
-    EnableVirtualTerminalProcessing ();
+    if (Help || ShortHelp) {
+        cl::PrintHelpInfo (argv[0]);
+        return 0;
+    }
+
     basic::SourceMgr             mgr;
     diagnostic::DiagnosticEngine diag (mgr);
     bool                         ok = true;

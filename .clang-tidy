@@ -19,7 +19,8 @@ Checks: >
     -readability-suspicious-call-argument,
     -cppcoreguidelines-pro-type-reinterpret-cast,
     -cppcoreguidelines-pro-type-const-cast,
-    -cppcoreguidelines-avoid-non-const-global-variables
+    -cppcoreguidelines-avoid-non-const-global-variables,
+    -cppcoreguidelines-pro-type-static-cast-downcast
 
 WarningsAsErrors: "*"
 

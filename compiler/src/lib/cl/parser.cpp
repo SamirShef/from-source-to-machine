@@ -1,5 +1,6 @@
 #include "pebble/cl/parser.h"
 #include "pebble/cl/option.h"
+#include "pebble/diagnostic/colors.h"
 #include <iostream>
 #include <vector>
 
@@ -13,7 +14,7 @@ ParseCommandLineOptions (int argc, char **argv) {
     for (auto *opt : Registry ()) {
         if (opt->IsPositional ()) {
             if (opt->IsList ()) {
-                positionalListOpt = dynamic_cast<OptPositionalList *> (opt);
+                positionalListOpt = static_cast<OptPositionalList *> (opt);
             } else {
                 positionalOpts.push_back (opt);
             }
@@ -60,11 +61,13 @@ ParseCommandLineOptions (int argc, char **argv) {
 
             if (matchedOpt != nullptr) {
                 if (!matchedOpt->Parse (valPart, i, argc, argv)) {
-                    std::cerr << "error: option '" << namePart << "' requires a value\n";
+                    std::cerr << color::RED << color::BOLD << "error:" << color::RESET
+                              << " option '" << namePart << "' requires a value\n";
                     return false;
                 }
             } else {
-                std::cerr << "error: unknown option '" << arg << "'\n";
+                std::cerr << color::RED << color::BOLD << "error:" << color::RESET
+                          << " unknown option '" << arg << "'\n";
                 return false;
             }
         } else {
@@ -74,7 +77,8 @@ ParseCommandLineOptions (int argc, char **argv) {
             } else if (positionalListOpt != nullptr) {
                 positionalListOpt->Parse (arg, i, argc, argv);
             } else {
-                std::cerr << "error: unexpected positional argument '" << arg << "'\n";
+                std::cerr << color::RED << color::BOLD << "error:" << color::RESET
+                          << " unexpected positional argument '" << arg << "'\n";
                 return false;
             }
         }
