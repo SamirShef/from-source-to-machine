@@ -49,7 +49,7 @@ ParseCommandLineOptions (int argc, char **argv) {
                     continue;
                 }
 
-                size_t expectedPrefLen = 0;
+                std::size_t expectedPrefLen = 0;
                 if (CheckPrefix (namePart, opt->Pref, expectedPrefLen)) {
                     if (namePart.substr (expectedPrefLen) == opt->Name) {
                         matchedOpt = opt;
