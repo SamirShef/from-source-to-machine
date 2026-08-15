@@ -32,7 +32,6 @@ ParseCommandLineOptions (int argc, char **argv) {
             continue;
         }
 
-        std::size_t prefLen = 0;
         if (!stopFlags && arg.starts_with ('-')) {
             std::string_view namePart = arg;
             std::string_view valPart;
