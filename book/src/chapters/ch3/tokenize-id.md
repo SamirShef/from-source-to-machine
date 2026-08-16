@@ -98,7 +98,7 @@ private:
 Token
 Lexer::NextToken () {
     // ...
-    if (std::isalpha (peek ()) != 0 || peek () == '_') {
+    if (std::isalpha (static_cast<unsigned char> (peek ())) != 0 || peek () == '_') {
         return tokenizeIdOrKeyword ();
     }
     // ...
@@ -109,7 +109,7 @@ Lexer::NextToken () {
 Token
 Lexer::tokenizeIdOrKeyword () {
     auto start = _pos;
-    while (!isAtEnd () && (std::isalnum (peek ()) != 0 || peek () == '_')) {
+    while (!isAtEnd () && (std::isalnum (static_cast<unsigned char> (peek ())) != 0 || peek () == '_')) {
         advance ();
     }
     std::string_view val (&_source[start], _pos - start);
@@ -193,7 +193,7 @@ Lexer::NextToken () {
 Token
 Lexer::tokenizeIdOrKeyword () {
     auto start = _pos;
-    while (!isAtEnd () && (std::isalnum (peek ()) != 0 || peek () == '_')) {
+    while (!isAtEnd () && (std::isalnum (static_cast<unsigned char> (peek ())) != 0 || peek () == '_')) {
         advance ();
     }
     std::string_view val (&_source[start], _pos - start);

@@ -55,7 +55,7 @@ Lexer::NextToken () {
 лексер получит строку `"   "`, то:
 
 1. `if (peek () == '\0')` вернет `false`.
-2. `if (std::isspace (peek ()) != 0)` вернет `true`.
+2. `if (std::isspace (static_cast<unsinged char> (peek ())) != 0)` вернет `true`.
 3. Вызовется `skipSpaces` и пропустятся все пробелы.
 4. Снова вызовется `NextToken`.
 5. `if (peek () == '\0')` вернет `true` -> вернется токен `Eof`.
