@@ -1244,7 +1244,7 @@ TokenKindToString (TokenKind kind) {
 
 #undef variant
 
-    // Заглужка, чтобы компилятор не выдавал предупреждений.
+    // Заглужка, чтобы не возникло UB, если switch не сработает.
     // Можно поставить __builtin_unreachable(), но его
     // не поддерживает MSVC.
     // Можно поставить std::unreachable(), если вы
