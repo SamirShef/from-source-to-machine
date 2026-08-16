@@ -74,8 +74,8 @@ CalculateOptionLen (const Option *opt) {
     }
     std::size_t len = CalculatePrefixLen (opt->Pref) + opt->Name.size ();
     if (!opt->ValueHint.empty ()) {
-        len += 1 + opt->ValueHint.size ();
-        //     ^ `=` character
+        len += 3 + opt->ValueHint.size ();
+        //     ^ `=` and `<>` characters
     }
     return len;
 }
