@@ -25,3 +25,7 @@
   - [Одинокие символы](./chapters/ch3/tokenize-char.md)
   - [Пунктуация](./chapters/ch3/tokenize-punct.md)
   - [Всевидящее око](./chapters/ch3/dumping.md)
+- [Тестирование]()
+  - [Unit-тестов мало](./chapters/ch4/unit-tests.md)
+  - [Движок тестирования лексера](./chapters/ch4/base-engine.md)
+  - [Примеры тестов](./chapters/ch4/examples.md)
